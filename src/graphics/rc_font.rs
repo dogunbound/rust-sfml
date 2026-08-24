@@ -76,7 +76,7 @@ impl RcFont {
     /// assert_eq!(kerning, 0.);
     /// ```
     #[must_use]
-    pub fn kerning(&self, first: u32, second: u32, character_size: u32) -> f32 {
+    pub fn kerning(&self, first: char, second: char, character_size: u32) -> f32 {
         self.font.borrow().kerning(first, second, character_size)
     }
 
@@ -98,7 +98,7 @@ impl RcFont {
     /// assert_eq!(kerning, 0.);
     /// ```
     #[must_use]
-    pub fn bold_kerning(&self, first: u32, second: u32, character_size: u32) -> f32 {
+    pub fn bold_kerning(&self, first: char, second: char, character_size: u32) -> f32 {
         self.font
             .borrow()
             .bold_kerning(first, second, character_size)

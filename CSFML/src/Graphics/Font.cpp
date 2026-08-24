@@ -45,11 +45,11 @@ extern "C" bool sfFont_hasGlyph(const sf::Font *font, uint32_t codePoint) {
     return font->hasGlyph(codePoint);
 }
 
-extern "C" float sfFont_getKerning(const sf::Font *font, uint32_t first, uint32_t second, unsigned int characterSize) {
+extern "C" float sfFont_getKerning(const sf::Font *font, char32_t first, char32_t second, unsigned int characterSize) {
     return font->getKerning(first, second, characterSize);
 }
 
-extern "C" float sfFont_getBoldKerning(const sf::Font *font, uint32_t first, uint32_t second, unsigned int characterSize) {
+extern "C" float sfFont_getBoldKerning(const sf::Font *font, char32_t first, char32_t second, unsigned int characterSize) {
     return font->getKerning(first, second, characterSize, true);
 }
 
