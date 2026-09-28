@@ -202,7 +202,6 @@ pub fn sfSoundBufferRecorder_getChannelCount(soundBufferRecorder: *const sfSound
 // SoundChannel.cpp
 pub fn sfSoundChannelVector_getLength(vec: *const sfSoundChannelVector) -> usize;
 pub fn sfSoundChannelVector_getData(vec: *const sfSoundChannelVector) -> *const sfSoundChannel;
-pub fn sfSoundChannelVector_del(vec: *const sfSoundChannelVector);
 // SoundRecorder.cpp
 pub fn sfSoundRecorder_isAvailable() -> bool;
 pub fn sfSoundRecorder_getDefaultDevice() -> *mut sfStdString;

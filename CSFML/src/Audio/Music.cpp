@@ -73,7 +73,7 @@ extern "C" unsigned int sfMusic_getSampleRate(const sf::Music *music) {
 }
 
 extern "C" const std::vector<sf::SoundChannel> *sfMusic_getChannelMap(const sf::Music *music) {
-    return new std::vector(music->getChannelMap());
+    return &music->getChannelMap();
 }
 
 extern "C" sfSoundStatus sfMusic_getStatus(const sf::Music *music) {

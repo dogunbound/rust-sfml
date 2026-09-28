@@ -57,7 +57,7 @@ extern "C" unsigned int sfSoundBuffer_getChannelCount(const sf::SoundBuffer *sou
 }
 
 extern "C" const std::vector<sf::SoundChannel> *sfSoundBuffer_getChannelMap(const sf::SoundBuffer *soundStream) {
-    return new std::vector(soundStream->getChannelMap());
+    return &soundStream->getChannelMap();
 }
 
 extern "C" int64_t sfSoundBuffer_getDuration(const sf::SoundBuffer *soundBuffer) {
