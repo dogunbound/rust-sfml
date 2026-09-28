@@ -102,6 +102,7 @@ fn pkgconfig_probe_with_fallback(lib: &str, fallback: &str) {
 /// Link supporting libraries for graphics on unix platforms (currently only freetype)
 fn unix_graphics_link_support_libs() {
     pkgconfig_probe_with_fallback("freetype2", "rustc-link-lib=dylib=freetype");
+    pkgconfig_probe_with_fallback("harfbuzz", "rustc-link-lib=dylib=harfbuzz");
 }
 
 fn unix_audio_link_support_libs(flac_ogg_linkage: LinkageKind) {
