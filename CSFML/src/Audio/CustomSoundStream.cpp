@@ -79,7 +79,7 @@ extern "C" unsigned int sfCustomSoundStream_getSampleRate(const sfCustomSoundStr
 }
 
 extern "C" const std::vector<sf::SoundChannel> *sfCustomSoundStream_getChannelMap(const sfCustomSoundStream *soundStream) {
-    return new std::vector(soundStream->getChannelMap());
+    return &soundStream->getChannelMap();
 }
 
 extern "C" void sfCustomSoundStream_setPitch(sfCustomSoundStream *soundStream, float pitch) {

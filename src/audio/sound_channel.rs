@@ -47,7 +47,6 @@ unsafe impl CppVectorItem for SoundChannel {
         unsafe { ffi::sfSoundChannelVector_getLength(vec) }
     }
 
-    fn del(vec: &mut CppVector<Self>) {
-        unsafe { ffi::sfSoundChannelVector_del(vec) }
-    }
+    // Only need to borrow the data. No need to clone, so no need to delete.
+    fn del(_: &mut CppVector<Self>) {}
 }
