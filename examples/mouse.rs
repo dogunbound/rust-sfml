@@ -1,4 +1,9 @@
-use sfml::{SfResult, graphics::{RenderWindow, Font, CircleShape, Text, Transformable, RenderTarget, Color, Shape, Drawable}, system::Vector2i, window::{Style, Event, Key, VideoMode, mouse}};
+use sfml::{
+    SfResult,
+    graphics::{CircleShape, Color, Font, RenderTarget, RenderWindow, Text, Transformable},
+    system::Vector2i,
+    window::{Event, Key, Style, VideoMode, mouse},
+};
 
 include!("../example_common.rs");
 
