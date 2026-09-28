@@ -1,5 +1,14 @@
 # Changelog
 
+## New
+
+### Added
+
+### Changed
+- Link HarfBuzz (required by SFML 3.x for text shaping) for Linux
+
+### Fixed
+
 ## 0.24.0
 
 ### Added
