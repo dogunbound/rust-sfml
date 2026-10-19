@@ -9,7 +9,7 @@ use {
     },
     std::{
         ffi::{CString, c_uint, c_void},
-        io::Empty
+        io::Empty,
     },
 };
 
@@ -84,10 +84,7 @@ impl<'src, S> Music<'src, S> {
     /// * stream - Your struct, implementing Read and Seek
     ///
     /// [`play`]: Music::play
-    pub fn open_from_stream(
-        &mut self,
-        stream: &'src mut InputStream<'src, S>,
-    ) -> SfResult<()> {
+    pub fn open_from_stream(&mut self, stream: &'src mut InputStream<'src, S>) -> SfResult<()> {
         unsafe { ffi::audio::sfMusic_openFromStream(self.music, &raw mut *stream.stream) }
             .into_sf_result()
     }
@@ -103,16 +100,12 @@ impl<'src, S> Music<'src, S> {
     /// * stream - Your struct, implementing Read and Seek
     ///
     /// [`play`]: Music::play
-    pub fn open_from_stream_owned(
-        &mut self,
-        stream: InputStream<'src, S>,
-    ) -> SfResult<()> {
+    pub fn open_from_stream_owned(&mut self, stream: InputStream<'src, S>) -> SfResult<()> {
         unsafe { ffi::audio::sfMusic_openFromStream(self.music, stream.stream.0.as_ptr()) }
             .into_sf_result()
             .map(|_| {
                 self.stream = Some(stream);
             })
-
     }
 }
 

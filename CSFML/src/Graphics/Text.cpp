@@ -206,10 +206,10 @@ extern "C" void sfText_setGlyphPreProcessor(sf::Text *text, sfTextGlyphPreProces
                                                     sf::Color &fillColor,
                                                     sf::Color &outlineColor,
                                                     float &outlineThickness) {
-        sfColor fill    = convertColor(fillColor);
+        sfColor fill = convertColor(fillColor);
         sfColor outline = convertColor(outlineColor);
         callback(&shapedGlyph, &style, &fill, &outline, &outlineThickness, userData);
-        fillColor    = convertColor(fill);
+        fillColor = convertColor(fill);
         outlineColor = convertColor(outline);
     });
 }
