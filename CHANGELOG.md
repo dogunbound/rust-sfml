@@ -20,6 +20,7 @@
 
 ### Fixed
 - Fix undefined behavior when dereferencing an empty `cpp::CppVector`
+- Fix `SoundBuffer::load_from_samples` always failing with `CallFailed`, and custom `SoundStream` channel maps having twice the requested length. The C++ shim filled the channel map with placeholder entries before copying the real ones
 - Fix every device name returned by `audio::capture::available_devices` and `audio::playback_device::available_devices` being the first name. `cpp::CppVector<cpp::CppString>` no longer derefs to a slice, since a `CppString` can't be sliced
 
 ### Removed
