@@ -263,6 +263,7 @@ fn main() {
             "CSFML/src/System/SfStdString.cpp",
             "CSFML/src/System/SfStdVector.cpp",
             "CSFML/src/System/Buffer.cpp",
+            "CSFML/src/System/Version.cpp",
         ]
         .iter(),
     );
@@ -271,6 +272,7 @@ fn main() {
             [
                 "CSFML/src/Audio/Listener.cpp",
                 "CSFML/src/Audio/Music.cpp",
+                "CSFML/src/Audio/PlaybackDevice.cpp",
                 "CSFML/src/Audio/Sound.cpp",
                 "CSFML/src/Audio/SoundChannel.cpp",
                 "CSFML/src/Audio/SoundBuffer.cpp",
@@ -291,7 +293,6 @@ fn main() {
                 "CSFML/src/Window/Keyboard.cpp",
                 "CSFML/src/Window/Mouse.cpp",
                 "CSFML/src/Window/Sensor.cpp",
-                "CSFML/src/Window/Touch.cpp",
                 "CSFML/src/Window/VideoMode.cpp",
                 "CSFML/src/Window/Window.cpp",
                 "CSFML/src/Window/Context.cpp",

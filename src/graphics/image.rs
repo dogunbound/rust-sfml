@@ -71,7 +71,7 @@ impl Image {
     /// Load from image file data on the filesystem.
     ///
     /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr and pic. Some format options are not supported,
+    /// psd, hdr, pic, pnm and qoi. Some format options are not supported,
     /// like progressive jpeg.
     /// If this function fails, the image is left unchanged.
     pub fn load_from_file(&mut self, path: &str) -> SfResult<()> {
@@ -80,7 +80,7 @@ impl Image {
     }
     /// Load from image file data in memory.
     ///
-    /// The supported image formats are bmp, png, tga, jpg, gif, psd, hdr and pic.
+    /// The supported image formats are bmp, png, tga, jpg, gif, psd, hdr, pic, pnm and qoi.
     /// Some format options are not supported, like progressive jpeg.
     /// If this function fails, the image is left unchanged.
     ///
@@ -91,7 +91,7 @@ impl Image {
     }
     /// Load from image file data coming from a custom stream.
     ///
-    /// The supported image formats are bmp, png, tga, jpg, gif, psd, hdr and pic.
+    /// The supported image formats are bmp, png, tga, jpg, gif, psd, hdr, pic, pnm and qoi.
     /// Some format options are not supported, like progressive jpeg.
     /// If this function fails, the image is left unchanged.
     pub fn load_from_stream<T: Read + Seek>(&mut self, stream: &mut T) -> SfResult<()> {
@@ -270,7 +270,7 @@ impl Image {
     ///
     /// The format of the image is automatically deduced from
     /// the extension. The supported image formats are bmp, png,
-    /// tga and jpg. The destination file is overwritten
+    /// tga, jpg and qoi. The destination file is overwritten
     /// if it already exists. This function fails if the image is empty.
     ///
     /// # Arguments
@@ -285,7 +285,7 @@ impl Image {
     /// Save the image to a buffer in memory
     ///
     /// The format of the image must be specified.
-    /// The supported image formats are bmp, png, tga and jpg.
+    /// The supported image formats are bmp, png, tga, jpg and qoi.
     /// This function fails if the image is empty, or if
     /// the format was invalid.
     ///

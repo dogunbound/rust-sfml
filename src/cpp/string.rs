@@ -57,6 +57,11 @@ unsafe impl CppVectorItem for CppString {
         unsafe { crate::ffi::system::sfStdStringVector_getLength(vec) }
     }
 
+    // A C++ std::string is not zero-sized, so the element address has to come from C++
+    fn get_at(vec: &super::CppVector<Self>, index: usize) -> *const Self {
+        unsafe { crate::ffi::system::sfStdStringVector_getAt(vec, index) }
+    }
+
     fn del(vec: &mut super::CppVector<Self>) {
         unsafe {
             crate::ffi::system::sfStdStringVector_del(vec);

@@ -34,8 +34,8 @@ Prerequisites
 - [CMake](https://cmake.org/), and a C++ toolchain for building SFML
 - 🐧 On Linux, you need the following dependencies installed:
    - Window module: `libGL libX11 libXcursor libXrandr`
-   - Graphics module: `libfreetype`
-   - Audio module: `libopenal libvorbisenc libvorbisfile libvorbis`
+   - Graphics module: `libfreetype libharfbuzz`
+   - Audio module: `libvorbisenc libvorbisfile libvorbis`
 
 Documentation
 =============

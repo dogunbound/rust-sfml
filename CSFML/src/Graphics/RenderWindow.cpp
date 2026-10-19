@@ -17,7 +17,6 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/Touch.hpp>
 #include <chrono>
 #include <cstddef>
 
@@ -254,9 +253,4 @@ extern "C" void sfMouse_setPositionRenderWindow(sfVector2i pos, const sf::Render
 extern "C" sfVector2i sfMouse_getPositionRenderWindow(const sf::RenderWindow *relativeTo) {
     sf::Vector2i vec2 = sf::Mouse::getPosition(*relativeTo);
     return {vec2.x, vec2.y};
-}
-
-extern "C" sfVector2i sfTouch_getPositionRenderWindow(unsigned int finger, const sf::RenderWindow *relativeTo) {
-    sf::Vector2i pos = sf::Touch::getPosition(finger, *relativeTo);
-    return {pos.x, pos.y};
 }

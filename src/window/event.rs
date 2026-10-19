@@ -271,15 +271,15 @@ impl Event {
             },
             EventType::TouchBegan => TouchBegan {
                 finger: unsafe { event.union.touch.finger },
-                position: unsafe { event.union.mouse_button.position },
+                position: unsafe { event.union.touch.position },
             },
             EventType::TouchMoved => TouchMoved {
                 finger: unsafe { event.union.touch.finger },
-                position: unsafe { event.union.mouse_button.position },
+                position: unsafe { event.union.touch.position },
             },
             EventType::TouchEnded => TouchEnded {
                 finger: unsafe { event.union.touch.finger },
-                position: unsafe { event.union.mouse_button.position },
+                position: unsafe { event.union.touch.position },
             },
             EventType::SensorChanged => SensorChanged {
                 type_: unsafe { event.union.sensor.type_ },

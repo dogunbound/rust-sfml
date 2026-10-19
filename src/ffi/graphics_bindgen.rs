@@ -269,7 +269,6 @@ pub fn sfRenderWindow_popGLStates(renderWindow: *mut sfRenderWindow);
 pub fn sfRenderWindow_resetGLStates(renderWindow: *mut sfRenderWindow);
 pub fn sfMouse_setPositionRenderWindow(pos: sfVector2i, relativeTo: *const sfRenderWindow);
 pub fn sfMouse_getPositionRenderWindow(relativeTo: *const sfRenderWindow) -> sfVector2i;
-pub fn sfTouch_getPositionRenderWindow(finger: c_uint, relativeTo: *const sfRenderWindow) -> sfVector2i;
 // Shader.cpp
 pub fn sfShader_new() -> *mut sfShader;
 pub fn sfShader_del(shader: *mut sfShader);

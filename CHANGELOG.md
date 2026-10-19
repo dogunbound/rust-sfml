@@ -7,16 +7,22 @@
 - Add `Text::{line_alignment, set_line_alignment}`, `Text::{text_orientation, set_text_orientation}` and `Text::{cluster_grouping, set_cluster_grouping}`, along with the matching `RcText` methods and `graphics::{LineAlignment, TextOrientation, ClusterGrouping}`
 - Add `Text::set_glyph_pre_processor` (`None` removes the pre-processor) to change the style and colors of each glyph when the text geometry is generated, along with the matching `RcText` methods and `graphics::GlyphAppearance`
 - Add `Text::{vertex_data, outline_vertex_data}` to access the vertices of a text, along with the matching `RcText` methods
+- Add `audio::playback_device`, covering the `sf::PlaybackDevice` namespace: listing and selecting playback devices, `device_sample_rate`, and `set_notification_callback` with the `playback_device::Notification` enum
+- Add `system::version` and `system::Version` to query the version of the SFML library loaded at runtime
+- Add `len`, `is_empty`, `get`, `iter` and indexing to `cpp::CppVector`, for every element type
 
 ### Changed
-- Link HarfBuzz (required by SFML 3.x for text shaping) for Linux
+- Link HarfBuzz (required by SFML 3.x for text shaping) for Linux and macOS
 - `TextStyle` now implements `Clone` and `Copy`
+- `Image` loads and saves QOI files, and loads PNM files, as SFML 3.1 supports them
 
 ### Fixed
 - Fix undefined behavior when dereferencing an empty `cpp::CppVector`
+- Fix every device name returned by `audio::capture::available_devices` and `audio::playback_device::available_devices` being the first name. `cpp::CppVector<cpp::CppString>` no longer derefs to a slice, since a `CppString` can't be sliced
 
 ### Removed
 - `Text::find_character_pos` and `RcText::find_character_pos`, deprecated by SFML 3.1 in favor of `shaped_glyphs`
+- `window::touch` (`is_down`, `desktop_position`), `Window::touch_position` and `RenderWindow::touch_position`, deprecated by SFML 3.1. Use the `position` of `Event::TouchBegan`, `Event::TouchMoved` and `Event::TouchEnded` instead, and track which fingers are down from those events. `desktop_position` has no replacement, since touch events report positions relative to the window.
 
 ## 0.24.0
 
