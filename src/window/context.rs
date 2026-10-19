@@ -77,6 +77,7 @@ impl Context {
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]
+#[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn test_settings() {
     use {crate::window::Window, std::thread};
 

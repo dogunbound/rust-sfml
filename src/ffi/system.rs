@@ -1,4 +1,4 @@
-pub use crate::ffi::*;
+pub(crate) use crate::ffi::*;
 
 decl_opaque! {
     pub(crate) sfInputStreamHelper;
@@ -18,6 +18,15 @@ type sfInputStreamHelperSeekCb =
     Option<unsafe extern "C" fn(pos: i64, user_data: *mut c_void) -> i64>;
 type sfInputStreamHelperTellCb = Option<unsafe extern "C" fn(user_data: *mut c_void) -> i64>;
 type sfInputStreamHelperGetSizeCb = Option<unsafe extern "C" fn(user_data: *mut c_void) -> i64>;
+#[cfg_attr(not(feature = "graphics"), expect(dead_code))]
 pub type sfBuffer = crate::system::buffer::Buffer;
 
-include!("system_bindgen.rs");
+#[allow(
+    dead_code,
+    reason = "the generated bindings declare functions that not every feature set uses"
+)]
+mod bindgen {
+    use super::*;
+    include!("system_bindgen.rs");
+}
+pub(crate) use bindgen::*;

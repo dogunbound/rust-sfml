@@ -84,7 +84,6 @@ pub trait Shape<'texture>: Drawable + Transformable {
     fn global_bounds(&self) -> FloatRect;
 
     /// Returns an immutable iterator over all points
-    #[must_use]
     fn points(&self) -> impl Iterator<Item = Vector2f> {
         let point_count = self.point_count();
         let mut i = 0;

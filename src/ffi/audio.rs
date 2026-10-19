@@ -1,4 +1,4 @@
-pub use crate::ffi::*;
+pub(crate) use crate::ffi::*;
 use crate::{
     audio::{SoundChannel, sound_source},
     system::Angle,

@@ -176,6 +176,7 @@ where
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]
+#[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn test_default_device_is_available() {
     if let Some(default) = default_device() {
         assert!(available_devices().iter().any(|device| device == &*default));
@@ -183,6 +184,7 @@ fn test_default_device_is_available() {
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]
+#[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn test_available_device_names_are_unique() {
     let devices = available_devices();
     for (i, device) in devices.iter().enumerate() {

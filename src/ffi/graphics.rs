@@ -1,5 +1,5 @@
 use crate::ffi::system::sfBuffer;
-pub use crate::ffi::*;
+pub(crate) use crate::ffi::*;
 use {
     super::system::sfInputStreamHelper,
     crate::{

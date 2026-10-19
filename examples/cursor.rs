@@ -184,11 +184,9 @@ fn main() -> SfResult<()> {
                 Event::MouseButtonReleased {
                     button: mouse::Button::Left,
                     ..
-                } => {
-                    if hotspot_selected {
-                        hotspot_selection = false;
-                        hotspot_selected = false;
-                    }
+                } if hotspot_selected => {
+                    hotspot_selection = false;
+                    hotspot_selected = false;
                 }
                 _ => {}
             }
