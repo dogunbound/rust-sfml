@@ -6,7 +6,6 @@
 #include "Window/Event.hpp"
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
-#include <SFML/Window/Touch.hpp>
 #include <chrono>
 #include <cstdint>
 #include <optional>

@@ -5,5 +5,8 @@ mod string;
 mod vector;
 
 pub use {fbox::FBox, string::CppString, vector::CppVector};
-pub(crate) use {fbox::RawDefault, vector::CppVectorItem};
+pub(crate) use {
+    fbox::RawDefault,
+    vector::{CppVectorItem, CppVectorSliceable},
+};
 pub(crate) type CppStringVector = CppVector<CppString>;

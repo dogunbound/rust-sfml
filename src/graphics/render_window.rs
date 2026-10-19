@@ -267,11 +267,6 @@ impl RenderWindow {
     pub fn set_mouse_position(&mut self, position: Vector2i) {
         unsafe { crate::ffi::graphics::sfMouse_setPositionRenderWindow(position, self) }
     }
-    /// Returns the current position of a touch in window coordinates.
-    #[must_use]
-    pub fn touch_position(&self, finger: u32) -> Vector2i {
-        unsafe { crate::ffi::graphics::sfTouch_getPositionRenderWindow(finger, self) }
-    }
 }
 
 /// Window operations

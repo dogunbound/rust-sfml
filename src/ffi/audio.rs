@@ -149,4 +149,7 @@ type sfCustomSoundStreamGetDataCb =
     Option<unsafe extern "C" fn(chunk: *mut sfSoundStreamChunk, user_data: *mut c_void) -> bool>;
 type sfCustomSoundStreamSeekCb = Option<unsafe extern "C" fn(pos: i64, user_data: *mut c_void)>;
 
+pub(crate) type sfPlaybackDeviceNotificationCallback =
+    Option<unsafe extern "C" fn(notification: c_int, user_data: *mut c_void)>;
+
 include!("audio_bindgen.rs");

@@ -1,5 +1,5 @@
 use crate::{
-    cpp::{CppVector, CppVectorItem},
+    cpp::{CppVector, CppVectorItem, CppVectorSliceable},
     ffi::window as ffi,
     system::{Vector2, Vector2u},
     window::thread_safety,
@@ -108,6 +108,8 @@ impl Default for VideoMode {
         Self::new(Vector2::new(0, 0), 0)
     }
 }
+
+unsafe impl CppVectorSliceable for VideoMode {}
 
 unsafe impl CppVectorItem for VideoMode {
     fn get_data(vec: &crate::cpp::CppVector<Self>) -> *const Self {

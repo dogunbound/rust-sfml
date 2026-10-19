@@ -126,6 +126,16 @@ pub fn sfMusic_getMaxGain(music: *const sfMusic) -> f32;
 pub fn sfMusic_getAttenuation(music: *const sfMusic) -> f32;
 pub fn sfMusic_setEffectProcessor(music: *mut sfMusic, effectProcessor: sfEffectProcessor, userData: *mut c_void);
 pub fn sfMusic_del(music: *mut sfMusic);
+// PlaybackDevice.cpp
+pub fn sfPlaybackDevice_getAvailableDevices() -> *mut sfStdStringVector;
+pub fn sfPlaybackDevice_getDefaultDevice() -> *mut sfStdString;
+pub fn sfPlaybackDevice_getDevice() -> *mut sfStdString;
+pub fn sfPlaybackDevice_setDevice(name: *const c_char) -> bool;
+pub fn sfPlaybackDevice_setDeviceToDefault() -> bool;
+pub fn sfPlaybackDevice_setDeviceToNull() -> bool;
+pub fn sfPlaybackDevice_isDefaultDevice() -> bool;
+pub fn sfPlaybackDevice_getDeviceSampleRate(sampleRate: *mut u32) -> bool;
+pub fn sfPlaybackDevice_setNotificationCallback(callback: sfPlaybackDeviceNotificationCallback, userData: *mut c_void);
 // Sound.cpp
 pub fn sfSound_new(buffer: *const sfSoundBuffer) -> *mut sfSound;
 pub fn sfSound_cpy(sound: *const sfSound) -> *mut sfSound;

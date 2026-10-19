@@ -24,7 +24,6 @@ mod keyboard;
 pub mod mouse;
 pub mod sensor;
 pub(crate) mod thread_safety;
-pub mod touch;
 mod video_mode;
 #[expect(clippy::module_inception)]
 mod window;

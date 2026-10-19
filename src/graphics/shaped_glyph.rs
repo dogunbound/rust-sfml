@@ -1,5 +1,5 @@
 use crate::{
-    cpp::{CppVector, CppVectorItem},
+    cpp::{CppVector, CppVectorItem, CppVectorSliceable},
     ffi::graphics as ffi,
     graphics::{Glyph, TextDirection},
     system::Vector2f,
@@ -27,6 +27,8 @@ pub struct ShapedGlyph {
     /// Number of vertices belonging to this glyph
     pub vertex_count: usize,
 }
+
+unsafe impl CppVectorSliceable for ShapedGlyph {}
 
 unsafe impl CppVectorItem for ShapedGlyph {
     fn get_data(vec: &CppVector<Self>) -> *const Self {

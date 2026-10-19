@@ -360,20 +360,21 @@ fn test_devices() {
     }
     let mut recorder = SoundBufferRecorder::new();
     assert_eq!(*recorder.device(), *default);
-    if let Some(device) = devices.last() {
-        recorder
-            .set_device(
-                device
-                    .to_str()
-                    .expect("Test code shall fail if this does not work"),
-            )
+    // Some listed devices can't be opened (e.g. sound servers that aren't running), so use the
+    // last one that can be selected
+    let selected = devices.iter().rev().find_map(|device| {
+        let name = device
+            .to_str()
             .expect("Test code shall fail if this does not work");
+        recorder.set_device(name).ok().map(|()| name)
+    });
+    if let Some(name) = selected {
         assert_eq!(
             recorder
                 .device()
                 .to_str()
                 .expect("Test code shall fail if this does not work"),
-            device
+            name
         );
     }
 }

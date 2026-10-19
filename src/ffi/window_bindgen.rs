@@ -48,10 +48,6 @@ pub fn sfMouse_setPositionRelativeTo(pos: sfVector2i, relativeTo: *const sfWindo
 pub fn sfSensor_isAvailable(sensor: sfSensorType) -> bool;
 pub fn sfSensor_setEnabled(sensor: sfSensorType, enabled: bool);
 pub fn sfSensor_getValue(sensor: sfSensorType) -> sfVector3f;
-// Touch.cpp
-pub fn sfTouch_isDown(finger: c_uint) -> bool;
-pub fn sfTouch_getPosition(finger: c_uint) -> sfVector2i;
-pub fn sfTouch_getPositionRelativeTo(finger: c_uint, relativeTo: *const sfWindow) -> sfVector2i;
 // VideoMode.cpp
 pub fn sfVideoMode_getDesktopMode() -> sfVideoMode;
 pub fn sfVideoMode_getFullscreenModes() -> *const sfVideoModeVector;

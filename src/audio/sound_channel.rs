@@ -1,5 +1,5 @@
 use crate::{
-    cpp::{CppVector, CppVectorItem},
+    cpp::{CppVector, CppVectorItem, CppVectorSliceable},
     ffi::audio as ffi,
 };
 
@@ -37,6 +37,8 @@ pub enum SoundChannel {
     TopBackRight,
     TopBackCenter,
 }
+
+unsafe impl CppVectorSliceable for SoundChannel {}
 
 unsafe impl CppVectorItem for SoundChannel {
     fn get_data(vec: &crate::cpp::CppVector<Self>) -> *const Self {

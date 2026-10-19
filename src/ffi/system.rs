@@ -2,6 +2,7 @@ pub use crate::ffi::*;
 
 decl_opaque! {
     pub(crate) sfInputStreamHelper;
+    pub(crate) sfVersion;
 }
 
 use crate::{

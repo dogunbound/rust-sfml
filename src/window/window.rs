@@ -410,12 +410,6 @@ impl Window {
         unsafe { ffi::sfWindow_setMouseCursor(self, cursor) }
     }
 
-    /// Returns the current position of a touch in window coordinates.
-    #[must_use]
-    pub fn touch_position(&self, finger: u32) -> Vector2i {
-        unsafe { ffi::sfTouch_getPositionRelativeTo(finger, self) }
-    }
-
     /// Check whether the window has the input focus.
     ///
     /// At any given time, only one window may have the input focus to receive input events
