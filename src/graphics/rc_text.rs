@@ -3,12 +3,19 @@ use {
         cpp::FBox,
         ffi::graphics as ffi,
         graphics::{
-            Color, Drawable, FloatRect, Font, RcFont, RenderStates, RenderTarget, TextStyle,
-            Transform, Transformable,
+            ClusterGrouping, Color, Drawable, FloatRect, Font, GlyphAppearance, LineAlignment,
+            RcFont, RenderStates, RenderTarget, ShapedGlyph, TextOrientation, TextStyle, Transform,
+            Transformable, Vertex,
+            glyph_pre_processor::{SharedGlyphPreProcessor, glyph_pre_processor_trampoline},
+            vertex,
         },
         system::{Angle, SfStr, SfStrConv, Vector2f},
     },
-    std::{cell::RefCell, ptr::NonNull, rc::Weak},
+    std::{
+        cell::RefCell,
+        ptr::{self, NonNull},
+        rc::Weak,
+    },
 };
 
 const ERROR_MSG: &str = "Text does not hold a font. Ignoring transformation!";
@@ -29,13 +36,15 @@ const PANIC_ERROR_MSG: &str = "Text does not hold a font! Return value cannot be
 /// The only functions that allow usage while the [`RcFont`] is not alive are
 /// `set_string`, `string`, `character_size`, `set_style`, `set_font`, `set_character_size`, `style`, `font`,
 /// `fill-color`, `outline_color`, `outline_thickness`, `line_spacing`, `set_line_spacing`, `letter_spacing`,
-/// `set_letter_spacing`
+/// `set_letter_spacing`, `line_alignment`, `set_line_alignment`, `text_orientation`, `set_text_orientation`,
+/// `cluster_grouping`, `set_cluster_grouping`, `set_glyph_pre_processor`
 ///
 /// [`Text`]: crate::graphics::Text
 #[derive(Debug)]
 pub struct RcText {
     handle: NonNull<ffi::sfText>,
     font: Weak<RefCell<FBox<Font>>>,
+    glyph_pre_processor: Option<SharedGlyphPreProcessor>,
 }
 
 impl RcText {
@@ -59,6 +68,7 @@ impl RcText {
         RcText {
             handle: NonNull::new(text).expect("Failed to create Text"),
             font: font.downgrade(),
+            glyph_pre_processor: None,
         }
     }
 
@@ -213,29 +223,140 @@ impl RcText {
         unsafe { ffi::sfText_getOutlineThickness(self.handle.as_ptr()) }
     }
 
-    /// Return the position of the index-th character in a text
+    /// Get the shaped glyphs that make up the `RcText`
     ///
-    /// This function computes the visual position of a character
-    /// from its index in the string. The returned position is
-    /// in global coordinates (translation, rotation, scale and
-    /// origin are applied).
-    /// If index is out of range, the position of the end of
-    /// the string is returned.
+    /// The glyph positions are in local coordinates, which means
+    /// that translation, rotation, scale and origin are not applied.
     ///
-    /// # Arguments
-    /// * index - The index of the character
-    ///
-    /// Return the position of the character
+    /// This takes `&mut self`, because SFML may regenerate the text geometry
+    /// (and therefore invalidate the returned slice) from `&self` methods
+    /// such as [`Drawable::draw`].
     ///
     /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
+    /// Function fails, returns an empty slice, and prints an error message if [`RcFont`] is dead.
     #[must_use]
-    pub fn find_character_pos(&self, index: usize) -> Vector2f {
+    pub fn shaped_glyphs(&mut self) -> &[ShapedGlyph] {
         if !self.font_exists() {
             eprintln!("{RETURN_ERROR_MSG}");
-            return Default::default();
+            return &[];
         }
-        unsafe { ffi::sfText_findCharacterPos(self.handle.as_ptr(), index) }
+        unsafe { &*ffi::sfText_getShapedGlyphs(self.handle.as_ptr()) }
+    }
+
+    /// Set the alignment of the lines of a multi-line `RcText`
+    ///
+    /// By default, lines are aligned according to the direction of their script.
+    ///
+    /// # Arguments
+    /// * alignment - New line alignment
+    pub fn set_line_alignment(&mut self, alignment: LineAlignment) {
+        unsafe { ffi::sfText_setLineAlignment(self.handle.as_ptr(), alignment) }
+    }
+
+    /// Get the alignment of the lines of a multi-line `RcText`
+    #[must_use]
+    pub fn line_alignment(&self) -> LineAlignment {
+        unsafe { ffi::sfText_getLineAlignment(self.handle.as_ptr()) }
+    }
+
+    /// Set the orientation of the lines of a `RcText`
+    ///
+    /// By default, the lines have a horizontal orientation. Most fonts don't natively support
+    /// vertical orientations, so SFML has to emulate them, which may not look good.
+    ///
+    /// # Arguments
+    /// * orientation - New text orientation
+    pub fn set_text_orientation(&mut self, orientation: TextOrientation) {
+        unsafe { ffi::sfText_setTextOrientation(self.handle.as_ptr(), orientation) }
+    }
+
+    /// Get the orientation of the lines of a `RcText`
+    #[must_use]
+    pub fn text_orientation(&self) -> TextOrientation {
+        unsafe { ffi::sfText_getTextOrientation(self.handle.as_ptr()) }
+    }
+
+    /// Set the cluster grouping algorithm used when shaping the `RcText`
+    ///
+    /// By default, character cluster grouping is used.
+    ///
+    /// # Arguments
+    /// * `cluster_grouping` - New cluster grouping algorithm
+    pub fn set_cluster_grouping(&mut self, cluster_grouping: ClusterGrouping) {
+        unsafe { ffi::sfText_setClusterGrouping(self.handle.as_ptr(), cluster_grouping) }
+    }
+
+    /// Get the cluster grouping algorithm used when shaping the `RcText`
+    #[must_use]
+    pub fn cluster_grouping(&self) -> ClusterGrouping {
+        unsafe { ffi::sfText_getClusterGrouping(self.handle.as_ptr()) }
+    }
+
+    /// Set or remove the glyph pre-processor
+    ///
+    /// The pre-processor is called for every glyph whenever the geometry of the `RcText` is
+    /// regenerated. It receives the shaped glyph, and can change the glyph's style, fill color,
+    /// outline color and outline thickness through the [`GlyphAppearance`].
+    ///
+    /// `Some` replaces any previously set pre-processor, and `None` removes it. Since `None`
+    /// has no closure type to infer, name the type, e.g.
+    /// `None::<fn(&ShapedGlyph, &mut GlyphAppearance)>`.
+    ///
+    /// The pre-processor is called from within SFML, so it must not panic (that aborts the
+    /// process), and it has no access to the `RcText` it is set on.
+    ///
+    /// # Arguments
+    /// * `pre_processor` - The pre-processor to call for every glyph, or `None` to remove it
+    pub fn set_glyph_pre_processor<F>(&mut self, pre_processor: Option<F>)
+    where
+        F: Fn(&ShapedGlyph, &mut GlyphAppearance) + 'static,
+    {
+        let pre_processor = pre_processor.map(SharedGlyphPreProcessor::new);
+        let callback: ffi::sfTextGlyphPreProcessorCb = if pre_processor.is_some() {
+            Some(glyph_pre_processor_trampoline)
+        } else {
+            None
+        };
+        let user_data = pre_processor
+            .as_ref()
+            .map_or(ptr::null_mut(), SharedGlyphPreProcessor::user_data);
+        unsafe { ffi::sfText_setGlyphPreProcessor(self.handle.as_ptr(), callback, user_data) }
+        self.glyph_pre_processor = pre_processor;
+    }
+
+    /// Get the vertices of the fill geometry of the `RcText`
+    ///
+    /// SFML regenerates the vertices whenever the text changes, which discards any changes made
+    /// to them. This takes `&mut self` for the same reason as [`RcText::shaped_glyphs`].
+    ///
+    /// # Warning
+    /// Function fails, returns an empty slice, and prints an error message if [`RcFont`] is dead.
+    #[must_use]
+    pub fn vertex_data(&mut self) -> &mut [Vertex] {
+        if !self.font_exists() {
+            eprintln!("{RETURN_ERROR_MSG}");
+            return &mut [];
+        }
+        let mut count = 0;
+        let data = unsafe { ffi::sfText_getVertexData(self.handle.as_ptr(), &mut count) };
+        unsafe { vertex::slice_from_raw_parts_mut(data.cast(), count) }
+    }
+
+    /// Get the vertices of the outline geometry of the `RcText`
+    ///
+    /// Same as [`RcText::vertex_data`], but for the outline.
+    ///
+    /// # Warning
+    /// Function fails, returns an empty slice, and prints an error message if [`RcFont`] is dead.
+    #[must_use]
+    pub fn outline_vertex_data(&mut self) -> &mut [Vertex] {
+        if !self.font_exists() {
+            eprintln!("{RETURN_ERROR_MSG}");
+            return &mut [];
+        }
+        let mut count = 0;
+        let data = unsafe { ffi::sfText_getOutlineVertexData(self.handle.as_ptr(), &mut count) };
+        unsafe { vertex::slice_from_raw_parts_mut(data.cast(), count) }
     }
 
     /// Get the local bounding rectangle of a text
@@ -324,6 +445,7 @@ impl Clone for RcText {
         Self {
             handle: NonNull::new(sp).expect("Not enough memory to clone Text"),
             font: self.font.clone(),
+            glyph_pre_processor: self.glyph_pre_processor.clone(),
         }
     }
 }

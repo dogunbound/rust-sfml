@@ -2,12 +2,18 @@ use {
     crate::{
         ffi::graphics as ffi,
         graphics::{
-            Color, Drawable, FloatRect, Font, RenderStates, RenderTarget, TextStyle, Transform,
-            Transformable,
+            ClusterGrouping, Color, Drawable, FloatRect, Font, GlyphAppearance, LineAlignment,
+            RenderStates, RenderTarget, ShapedGlyph, TextOrientation, TextStyle, Transform,
+            Transformable, Vertex,
+            glyph_pre_processor::{SharedGlyphPreProcessor, glyph_pre_processor_trampoline},
+            vertex,
         },
         system::{Angle, SfStr, SfStrConv, Vector2f},
     },
-    std::{marker::PhantomData, ptr::NonNull},
+    std::{
+        marker::PhantomData,
+        ptr::{self, NonNull},
+    },
 };
 
 /// Graphical text
@@ -25,6 +31,7 @@ use {
 pub struct Text<'s> {
     handle: NonNull<ffi::sfText>,
     font: PhantomData<&'s Font>,
+    glyph_pre_processor: Option<SharedGlyphPreProcessor>,
 }
 
 impl<'s> Text<'s> {
@@ -48,6 +55,7 @@ impl<'s> Text<'s> {
         Text {
             handle: NonNull::new(text).expect("Failed to create Text"),
             font: PhantomData,
+            glyph_pre_processor: None,
         }
     }
 
@@ -176,22 +184,119 @@ impl<'s> Text<'s> {
         unsafe { ffi::sfText_getOutlineThickness(self.handle.as_ptr()) }
     }
 
-    /// Return the position of the index-th character in a text
+    /// Get the shaped glyphs that make up the text
     ///
-    /// This function computes the visual position of a character
-    /// from its index in the string. The returned position is
-    /// in global coordinates (translation, rotation, scale and
-    /// origin are applied).
-    /// If index is out of range, the position of the end of
-    /// the string is returned.
+    /// The glyph positions are in local coordinates, which means
+    /// that translation, rotation, scale and origin are not applied.
+    ///
+    /// This takes `&mut self`, because SFML may regenerate the text geometry
+    /// (and therefore invalidate the returned slice) from `&self` methods
+    /// such as [`Drawable::draw`].
+    #[must_use]
+    pub fn shaped_glyphs(&mut self) -> &[ShapedGlyph] {
+        unsafe { &*ffi::sfText_getShapedGlyphs(self.handle.as_ptr()) }
+    }
+
+    /// Set the alignment of the lines of a multi-line text
+    ///
+    /// By default, lines are aligned according to the direction of their script.
     ///
     /// # Arguments
-    /// * index - The index of the character
-    ///
-    /// Return the position of the character
+    /// * alignment - New line alignment
+    pub fn set_line_alignment(&mut self, alignment: LineAlignment) {
+        unsafe { ffi::sfText_setLineAlignment(self.handle.as_ptr(), alignment) }
+    }
+
+    /// Get the alignment of the lines of a multi-line text
     #[must_use]
-    pub fn find_character_pos(&self, index: usize) -> Vector2f {
-        unsafe { ffi::sfText_findCharacterPos(self.handle.as_ptr(), index) }
+    pub fn line_alignment(&self) -> LineAlignment {
+        unsafe { ffi::sfText_getLineAlignment(self.handle.as_ptr()) }
+    }
+
+    /// Set the orientation of the lines of a text
+    ///
+    /// By default, the lines have a horizontal orientation. Most fonts don't natively support
+    /// vertical orientations, so SFML has to emulate them, which may not look good.
+    ///
+    /// # Arguments
+    /// * orientation - New text orientation
+    pub fn set_text_orientation(&mut self, orientation: TextOrientation) {
+        unsafe { ffi::sfText_setTextOrientation(self.handle.as_ptr(), orientation) }
+    }
+
+    /// Get the orientation of the lines of a text
+    #[must_use]
+    pub fn text_orientation(&self) -> TextOrientation {
+        unsafe { ffi::sfText_getTextOrientation(self.handle.as_ptr()) }
+    }
+
+    /// Set the cluster grouping algorithm used when shaping the text
+    ///
+    /// By default, character cluster grouping is used.
+    ///
+    /// # Arguments
+    /// * `cluster_grouping` - New cluster grouping algorithm
+    pub fn set_cluster_grouping(&mut self, cluster_grouping: ClusterGrouping) {
+        unsafe { ffi::sfText_setClusterGrouping(self.handle.as_ptr(), cluster_grouping) }
+    }
+
+    /// Get the cluster grouping algorithm used when shaping the text
+    #[must_use]
+    pub fn cluster_grouping(&self) -> ClusterGrouping {
+        unsafe { ffi::sfText_getClusterGrouping(self.handle.as_ptr()) }
+    }
+
+    /// Set or remove the glyph pre-processor
+    ///
+    /// The pre-processor is called for every glyph whenever the geometry of the text is
+    /// regenerated. It receives the shaped glyph, and can change the glyph's style, fill color,
+    /// outline color and outline thickness through the [`GlyphAppearance`].
+    ///
+    /// `Some` replaces any previously set pre-processor, and `None` removes it. Since `None`
+    /// has no closure type to infer, name the type, e.g.
+    /// `None::<fn(&ShapedGlyph, &mut GlyphAppearance)>`.
+    ///
+    /// The pre-processor is called from within SFML, so it must not panic (that aborts the
+    /// process), and it has no access to the text it is set on.
+    ///
+    /// # Arguments
+    /// * `pre_processor` - The pre-processor to call for every glyph, or `None` to remove it
+    pub fn set_glyph_pre_processor<F>(&mut self, pre_processor: Option<F>)
+    where
+        F: Fn(&ShapedGlyph, &mut GlyphAppearance) + 'static,
+    {
+        let pre_processor = pre_processor.map(SharedGlyphPreProcessor::new);
+        let callback: ffi::sfTextGlyphPreProcessorCb = if pre_processor.is_some() {
+            Some(glyph_pre_processor_trampoline)
+        } else {
+            None
+        };
+        let user_data = pre_processor
+            .as_ref()
+            .map_or(ptr::null_mut(), SharedGlyphPreProcessor::user_data);
+        unsafe { ffi::sfText_setGlyphPreProcessor(self.handle.as_ptr(), callback, user_data) }
+        self.glyph_pre_processor = pre_processor;
+    }
+
+    /// Get the vertices of the fill geometry of the text
+    ///
+    /// SFML regenerates the vertices whenever the text changes, which discards any changes made
+    /// to them. This takes `&mut self` for the same reason as [`Text::shaped_glyphs`].
+    #[must_use]
+    pub fn vertex_data(&mut self) -> &mut [Vertex] {
+        let mut count = 0;
+        let data = unsafe { ffi::sfText_getVertexData(self.handle.as_ptr(), &mut count) };
+        unsafe { vertex::slice_from_raw_parts_mut(data.cast(), count) }
+    }
+
+    /// Get the vertices of the outline geometry of the text
+    ///
+    /// Same as [`Text::vertex_data`], but for the outline.
+    #[must_use]
+    pub fn outline_vertex_data(&mut self) -> &mut [Vertex] {
+        let mut count = 0;
+        let data = unsafe { ffi::sfText_getOutlineVertexData(self.handle.as_ptr(), &mut count) };
+        unsafe { vertex::slice_from_raw_parts_mut(data.cast(), count) }
     }
 
     /// Get the local bounding rectangle of a text
@@ -261,6 +366,7 @@ impl<'s> Clone for Text<'s> {
         Text {
             handle: NonNull::new(sp).expect("Not enough memory to clone Text"),
             font: PhantomData,
+            glyph_pre_processor: self.glyph_pre_processor.clone(),
         }
     }
 }

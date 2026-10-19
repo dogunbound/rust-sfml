@@ -4,7 +4,10 @@ use {
     super::system::sfInputStreamHelper,
     crate::{
         ffi::window::{Event as sfEvent, sfContextSettings, sfCursor, sfWindow, sfWindowHandle},
-        graphics::{Color, Rect, RenderStates as sfRenderStates, Transform as sfTransform},
+        graphics::{
+            ClusterGrouping, Color, LineAlignment, Rect, RenderStates as sfRenderStates,
+            ShapedGlyph, TextOrientation, Transform as sfTransform,
+        },
         window::VideoMode as sfVideoMode,
     },
 };
@@ -29,6 +32,21 @@ type sfRenderWindow = crate::graphics::RenderWindow;
 type sfRenderTexture = crate::graphics::RenderTexture;
 type sfVertexBuffer = crate::graphics::VertexBuffer;
 pub(crate) type sfState = crate::window::window_enums::State;
+pub(crate) type sfShapedGlyphVector = crate::cpp::CppVector<ShapedGlyph>;
+type sfShapedGlyph = ShapedGlyph;
+type sfLineAlignment = LineAlignment;
+type sfTextOrientation = TextOrientation;
+type sfClusterGrouping = ClusterGrouping;
+pub(crate) type sfTextGlyphPreProcessorCb = Option<
+    unsafe extern "C" fn(
+        shaped_glyph: *const sfShapedGlyph,
+        style: *mut u32,
+        fill_color: *mut Color,
+        outline_color: *mut Color,
+        outline_thickness: *mut f32,
+        user_data: *mut c_void,
+    ),
+>;
 
 /// Enumeration of the blending factors.
 ///
@@ -266,6 +284,10 @@ pub struct sfFontInfo {
 pub struct sfGlyph {
     ///< Offset to move horizontically to the next character
     pub advance: f32,
+    ///< Left offset after forced autohint. Internally used by `getKerning()`
+    pub _lsb_delta: i32,
+    ///< Right offset after forced autohint. Internally used by `getKerning()`
+    pub _rsb_delta: i32,
     ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
     pub bounds: sfFloatRect,
     ///< Texture coordinates of the glyph inside the font's image
