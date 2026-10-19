@@ -96,7 +96,8 @@ impl Image {
     /// If this function fails, the image is left unchanged.
     pub fn load_from_stream<T: Read + Seek>(&mut self, stream: &mut T) -> SfResult<()> {
         let mut input_stream = InputStream::new(stream);
-        unsafe { ffi::sfImage_loadFromStream(self, &raw mut *input_stream.stream) }.into_sf_result()?;
+        unsafe { ffi::sfImage_loadFromStream(self, &raw mut *input_stream.stream) }
+            .into_sf_result()?;
         Ok(())
     }
 }

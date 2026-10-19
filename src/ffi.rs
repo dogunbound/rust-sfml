@@ -28,13 +28,13 @@ pub(crate) mod window;
 
 use std::{ffi::c_void, os::raw::c_char};
 
+#[cfg(feature = "window")]
+use crate::system::Vector2;
 #[cfg(any(feature = "audio", feature = "window"))]
 use {
     crate::system::Vector3,
     std::os::raw::{c_int, c_uint},
 };
-#[cfg(feature = "window")]
-use crate::system::Vector2;
 
 #[cfg(any(feature = "audio", feature = "window"))]
 pub type sfVector3f = Vector3<f32>;

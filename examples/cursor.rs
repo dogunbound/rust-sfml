@@ -214,7 +214,10 @@ fn main() -> SfResult<()> {
         // Grid interactions
         let rela_x = mp.x - i32::from(DRAW_AREA_TOPLEFT.0);
         let rela_y = mp.y - i32::from(DRAW_AREA_TOPLEFT.1);
-        let (gx, gy) = (rela_x / i32::from(DRAW_CELL_WH), rela_y / i32::from(DRAW_CELL_WH));
+        let (gx, gy) = (
+            rela_x / i32::from(DRAW_CELL_WH),
+            rela_y / i32::from(DRAW_CELL_WH),
+        );
         if gx >= 0 && gy >= 0 {
             if let Some(cell) = gridindex(&mut pixel_grid, gx as usize, gy as usize) {
                 if hotspot_selection {
