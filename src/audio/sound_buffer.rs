@@ -239,3 +239,27 @@ impl Drop for SoundBuffer {
         }
     }
 }
+
+#[test]
+fn test_load_from_samples_keeps_channel_layout() {
+    let mut buffer = SoundBuffer::new().expect("Failed to create SoundBuffer");
+    let samples = [1i16, -1, 2, -2, 3, -3, 4, -4];
+    buffer
+        .load_from_samples(
+            &samples,
+            2,
+            44_100,
+            &[SoundChannel::FrontLeft, SoundChannel::FrontRight],
+        )
+        .expect("Stereo samples should load");
+    assert_eq!(buffer.channel_count(), 2);
+    assert_eq!(buffer.sample_rate(), 44_100);
+    assert_eq!(buffer.samples(), &samples[..]);
+
+    buffer
+        .load_from_samples(&samples[..4], 1, 22_050, &[SoundChannel::Mono])
+        .expect("Mono samples should load");
+    assert_eq!(buffer.channel_count(), 1);
+    assert_eq!(buffer.sample_rate(), 22_050);
+    assert_eq!(buffer.samples(), &samples[..4]);
+}
