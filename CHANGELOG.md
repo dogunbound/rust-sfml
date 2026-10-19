@@ -3,11 +3,20 @@
 ## New
 
 ### Added
+- Add `Text::shaped_glyphs` and `RcText::shaped_glyphs` to access the glyphs of a text after shaping, along with `graphics::ShapedGlyph` and `graphics::TextDirection`
+- Add `Text::{line_alignment, set_line_alignment}`, `Text::{text_orientation, set_text_orientation}` and `Text::{cluster_grouping, set_cluster_grouping}`, along with the matching `RcText` methods and `graphics::{LineAlignment, TextOrientation, ClusterGrouping}`
+- Add `Text::set_glyph_pre_processor` (`None` removes the pre-processor) to change the style and colors of each glyph when the text geometry is generated, along with the matching `RcText` methods and `graphics::GlyphAppearance`
+- Add `Text::{vertex_data, outline_vertex_data}` to access the vertices of a text, along with the matching `RcText` methods
 
 ### Changed
 - Link HarfBuzz (required by SFML 3.x for text shaping) for Linux
+- `TextStyle` now implements `Clone` and `Copy`
 
 ### Fixed
+- Fix undefined behavior when dereferencing an empty `cpp::CppVector`
+
+### Removed
+- `Text::find_character_pos` and `RcText::find_character_pos`, deprecated by SFML 3.1 in favor of `shaped_glyphs`
 
 ## 0.24.0
 

@@ -4,6 +4,7 @@ use sfml::{
         Color, Font, RectangleShape, RenderTarget, RenderWindow, Shape, Text, TextStyle,
         Transformable,
     },
+    system::Vector2f,
     window::{Event, Key, Style, clipboard, window_enums::State},
 };
 
@@ -128,7 +129,7 @@ fn main() -> SfResult<()> {
         window.clear(Color::BLACK);
         window.draw(&text);
         if show_cursor {
-            let mut end = text.find_character_pos(usize::MAX);
+            let mut end = end_of_text(&mut text, &font, string.ends_with('\n'));
             end.x += 2.0;
             end.y += 2.0;
             let mut rs = RectangleShape::new();
@@ -144,4 +145,29 @@ fn main() -> SfResult<()> {
     }
     println!("The final text is {:?}", text.string().to_rust_string());
     Ok(())
+}
+
+/// Global position right after the last character, where the next character would be drawn
+///
+/// Same computation as the `Text::findCharacterPos` of SFML 3.0, which SFML 3.1 deprecated
+fn end_of_text(text: &mut Text, font: &Font, ends_with_newline: bool) -> Vector2f {
+    let character_size = text.character_size();
+    let char_size = character_size as f32;
+    let line_spacing = font.line_spacing(character_size) * text.line_spacing();
+    let bold = text.style().contains(TextStyle::BOLD);
+    let whitespace_width = font
+        .glyph(u32::from(' '), character_size, bold, 0.0)
+        .advance();
+    let letter_spacing = (whitespace_width / 3.0) * (text.letter_spacing() - 1.0);
+    let local = match text.shaped_glyphs().last() {
+        None => Vector2f::default(),
+        Some(last) if ends_with_newline => {
+            Vector2f::new(0.0, last.position.y + line_spacing - char_size)
+        }
+        Some(last) => Vector2f::new(
+            last.position.x + last.glyph.advance() + letter_spacing,
+            last.position.y - char_size,
+        ),
+    };
+    text.transform().transform_point(local)
 }

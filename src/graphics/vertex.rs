@@ -114,3 +114,21 @@ impl Default for Vertex {
         Self::DEFAULT
     }
 }
+
+/// Borrow the `len` vertices starting at `data`
+///
+/// # Safety
+///
+/// If `len` is not 0, `data` must point to `len` valid vertices that are not accessed through
+/// any other reference for the lifetime `'a`.
+pub(crate) unsafe fn slice_from_raw_parts_mut<'a>(
+    data: *mut Vertex,
+    len: usize,
+) -> &'a mut [Vertex] {
+    if len == 0 {
+        // An empty C++ vector may have a null data pointer, which slices don't allow
+        &mut []
+    } else {
+        unsafe { std::slice::from_raw_parts_mut(data, len) }
+    }
+}

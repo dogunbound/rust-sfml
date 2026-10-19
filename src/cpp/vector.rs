@@ -34,6 +34,11 @@ impl<T: CppVectorItem> ::std::ops::Deref for CppVector<T> {
     type Target = [T];
 
     fn deref(&self) -> &Self::Target {
-        unsafe { std::slice::from_raw_parts(T::get_data(self), T::get_len(self)) }
+        let len = T::get_len(self);
+        // An empty std::vector may have a null data pointer, which slices don't allow
+        if len == 0 {
+            return &[];
+        }
+        unsafe { std::slice::from_raw_parts(T::get_data(self), len) }
     }
 }

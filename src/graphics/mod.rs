@@ -14,6 +14,7 @@ pub use {
         drawable::Drawable,
         font::{Font, Info as FontInfo},
         glyph::Glyph,
+        glyph_pre_processor::GlyphAppearance,
         image::{Image, PixelAccessError},
         primitive_type::PrimitiveType,
         rc_font::RcFont,
@@ -28,8 +29,10 @@ pub use {
         render_window::RenderWindow,
         shader::Shader,
         shape::Shape,
+        shaped_glyph::ShapedGlyph,
         sprite::Sprite,
         text::Text,
+        text_enums::{ClusterGrouping, LineAlignment, TextDirection, TextOrientation},
         text_style::TextStyle,
         texture::Texture,
         transform::Transform,
@@ -53,6 +56,7 @@ mod drawable;
 mod font;
 pub mod glsl;
 mod glyph;
+mod glyph_pre_processor;
 mod image;
 mod primitive_type;
 mod rc_font;
@@ -67,8 +71,10 @@ mod render_texture;
 mod render_window;
 mod shader;
 mod shape;
+mod shaped_glyph;
 mod sprite;
 mod text;
+mod text_enums;
 mod text_style;
 mod texture;
 mod transform;
