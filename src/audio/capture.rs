@@ -1,7 +1,7 @@
 use {
     crate::{
-        IntoSfResult, SfResult,
-        audio::SoundBuffer,
+        IntoSfResult, SfError, SfResult,
+        audio::{SoundBuffer, SoundChannel},
         cpp::{CppString, CppVector, FBox},
         ffi::audio as ffi,
     },
@@ -180,17 +180,34 @@ impl<'a, R: SoundRecorder> SoundRecorderDriver<'a, R> {
     /// Set the channel count of the audio capture device.
     ///
     /// This method allows you to specify the number of channels used for recording.
-    /// Currently only 16-bit mono (1) and 16-bit stereo (1) are supported.
-    pub fn set_channel_count(&mut self, channel_count: u32) {
-        unsafe { ffi::sfCustomSoundRecorder_setChannelCount(self.handle.as_ptr(), channel_count) }
+    ///
+    /// # Errors
+    ///
+    /// Returns [`SfError::UnsupportedChannelCount`] if SFML does not accept `channel_count`.
+    /// The channel count is left unchanged in that case.
+    pub fn set_channel_count(&mut self, channel_count: u32) -> SfResult<()> {
+        unsafe { ffi::sfCustomSoundRecorder_setChannelCount(self.handle.as_ptr(), channel_count) };
+        let current = self.channel_count();
+        if current == channel_count {
+            Ok(())
+        } else {
+            Err(SfError::UnsupportedChannelCount {
+                requested: channel_count,
+                current,
+            })
+        }
     }
     /// Get the number of channels used by this recorder.
-    ///
-    /// Currently only mono and stereo are supported,
-    /// so the value is either 1 (for mono) or 2 (for stereo).
     #[must_use]
     pub fn channel_count(&self) -> u32 {
         unsafe { ffi::sfCustomSoundRecorder_getChannelCount(self.handle.as_ptr()) }
+    }
+    /// Get the map of the position in each sample frame to its sound channel.
+    ///
+    /// It has one entry per channel, so its length matches [`channel_count`](Self::channel_count).
+    #[must_use]
+    pub fn channel_map(&self) -> &CppVector<SoundChannel> {
+        unsafe { &*ffi::sfCustomSoundRecorder_getChannelMap(self.handle.as_ptr()) }
     }
     /// Get the name of the current audio capture device.
     #[must_use]
@@ -324,29 +341,85 @@ impl SoundBufferRecorder {
 
     /// Get the number of channels used by this recorder
     ///
-    /// Currently only mono and stereo are supported, so the
-    /// value is either 1 (for mono) or 2 (for stereo).
-    ///
     /// Number of channels
     #[must_use]
     pub fn channel_count(&self) -> u32 {
         unsafe { ffi::sfSoundBufferRecorder_getChannelCount(self.handle.as_ptr()) }
     }
 
+    /// Get the map of the position in each sample frame to its sound channel.
+    ///
+    /// It has one entry per channel, so its length matches [`channel_count`](Self::channel_count).
+    #[must_use]
+    pub fn channel_map(&self) -> &CppVector<SoundChannel> {
+        unsafe { &*ffi::sfSoundBufferRecorder_getChannelMap(self.handle.as_ptr()) }
+    }
+
     /// Set the channel count of the audio capture device
     ///
-    /// This method allows you to specify the number of channels
-    /// used for recording. Currently only 16-bit mono and
-    /// 16-bit stereo are supported.
+    /// This method allows you to specify the number of channels used for recording.
     ///
-    /// # Arguments
-    /// channelCount - Number of channels. Currently only
-    ///                     mono (1) and stereo (2) are supported.
-    pub fn set_channel_count(&mut self, channel_count: u32) {
+    /// # Errors
+    ///
+    /// Returns [`SfError::UnsupportedChannelCount`] if SFML does not accept `channel_count`.
+    /// The channel count is left unchanged in that case.
+    pub fn set_channel_count(&mut self, channel_count: u32) -> SfResult<()> {
         unsafe {
             ffi::sfSoundBufferRecorder_setChannelCount(self.handle.as_ptr(), channel_count);
         }
+        let current = self.channel_count();
+        if current == channel_count {
+            Ok(())
+        } else {
+            Err(SfError::UnsupportedChannelCount {
+                requested: channel_count,
+                current,
+            })
+        }
     }
+}
+
+#[cfg(test)]
+struct NullRecorder;
+
+#[cfg(test)]
+impl SoundRecorder for NullRecorder {
+    fn on_process_samples(&mut self, _samples: &[i16]) -> bool {
+        true
+    }
+}
+
+#[test]
+fn test_driver_channel_count_is_checked_by_sfml() {
+    let mut recorder = NullRecorder;
+    let mut driver = SoundRecorderDriver::new(&mut recorder);
+    assert!(matches!(
+        driver.set_channel_count(8),
+        Err(SfError::UnsupportedChannelCount {
+            requested: 8,
+            current: 1
+        })
+    ));
+    assert_eq!(driver.channel_count(), 1);
+    assert!(driver.set_channel_count(2).is_ok());
+    assert_eq!(driver.channel_count(), 2);
+    assert_eq!(driver.channel_map().len(), 2);
+}
+
+#[test]
+fn test_buffer_recorder_channel_count_is_checked_by_sfml() {
+    let mut recorder = SoundBufferRecorder::new();
+    assert!(matches!(
+        recorder.set_channel_count(8),
+        Err(SfError::UnsupportedChannelCount {
+            requested: 8,
+            current: 1
+        })
+    ));
+    assert_eq!(recorder.channel_count(), 1);
+    assert!(recorder.set_channel_count(2).is_ok());
+    assert_eq!(recorder.channel_count(), 2);
+    assert_eq!(recorder.channel_map().len(), 2);
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]

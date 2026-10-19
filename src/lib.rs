@@ -44,6 +44,13 @@ pub enum SfError {
     NulInStr,
     /// Call to SFML function returned an error
     CallFailed,
+    /// A sound recorder rejected a channel count. The recorder keeps `current` channels.
+    UnsupportedChannelCount {
+        /// The channel count that was requested
+        requested: u32,
+        /// The channel count the recorder kept
+        current: u32,
+    },
 }
 
 impl Display for SfError {
@@ -51,6 +58,13 @@ impl Display for SfError {
         match self {
             SfError::NulInStr => write!(f, "Interior nul byte in string passed to SFML"),
             SfError::CallFailed => write!(f, "Call to SFML function returned an error"),
+            SfError::UnsupportedChannelCount { requested, current } => {
+                let noun = if *current == 1 { "channel" } else { "channels" };
+                write!(
+                    f,
+                    "Channel count {requested} is not supported by this capture device. Keeping {current} {noun}."
+                )
+            }
         }
     }
 }

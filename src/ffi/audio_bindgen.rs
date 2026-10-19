@@ -13,6 +13,7 @@ pub fn sfCustomSoundRecorder_setDevice(soundRecorder: *mut sfCustomSoundRecorder
 pub fn sfCustomSoundRecorder_getDevice(soundRecorder: *mut sfCustomSoundRecorder) -> *const sfStdString;
 pub fn sfCustomSoundRecorder_setChannelCount(soundRecorder: *mut sfCustomSoundRecorder, channelCount: c_uint);
 pub fn sfCustomSoundRecorder_getChannelCount(soundRecorder: *const sfCustomSoundRecorder) -> c_uint;
+pub fn sfCustomSoundRecorder_getChannelMap(soundRecorder: *const sfCustomSoundRecorder) -> *const sfSoundChannelVector;
 // CustomSoundStream.cpp
 pub fn sfCustomSoundStream_new(onGetData: sfCustomSoundStreamGetDataCb, onSeek: sfCustomSoundStreamSeekCb, channelCount: c_uint, sampleRate: c_uint, channelMap: *const sfSoundChannel, soundChannelMapLen: usize, userData: *mut c_void) -> *mut sfCustomSoundStream;
 pub fn sfCustomSoundStream_play(soundStream: *mut sfCustomSoundStream);
@@ -209,6 +210,7 @@ pub fn sfSoundBufferRecorder_setDevice(soundBufferRecorder: *mut sfSoundBufferRe
 pub fn sfSoundBufferRecorder_getDevice(soundBufferRecorder: *mut sfSoundBufferRecorder) -> *const sfStdString;
 pub fn sfSoundBufferRecorder_setChannelCount(soundBufferRecorder: *mut sfSoundBufferRecorder, channelCount: c_uint);
 pub fn sfSoundBufferRecorder_getChannelCount(soundBufferRecorder: *const sfSoundBufferRecorder) -> c_uint;
+pub fn sfSoundBufferRecorder_getChannelMap(soundBufferRecorder: *const sfSoundBufferRecorder) -> *const sfSoundChannelVector;
 // SoundChannel.cpp
 pub fn sfSoundChannelVector_getLength(vec: *const sfSoundChannelVector) -> usize;
 pub fn sfSoundChannelVector_getData(vec: *const sfSoundChannelVector) -> *const sfSoundChannel;
