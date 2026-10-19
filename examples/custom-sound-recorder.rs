@@ -58,11 +58,9 @@ impl<'font> TextWriter<'font> {
 fn start_recording(
     driver: &mut SoundRecorderDriver<'_, MyRecorder>,
     device: &CppString,
-    channel_count: u32,
     sample_rate: u32,
 ) -> Result<(), Box<dyn Error>> {
     driver.set_device(device.to_str()?)?;
-    driver.set_channel_count(channel_count)?;
     driver.start(sample_rate)?;
     Ok(())
 }
@@ -96,6 +94,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let (mut rec, recv) = MyRecorder::new();
     let mut samp_buf = Vec::new();
     let mut driver = SoundRecorderDriver::new(&mut rec);
+    driver.set_channel_count(2)?;
     let mut started = false;
     let mut snd_buf = SoundBuffer::new()?;
     let mut samp_accum = Vec::new();
@@ -104,7 +103,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut mode = Mode::Main;
     let mut input_buf = String::new();
     let mut desired_sample_rate = 44_100;
-    let mut desired_channel_count = 2;
     let mut status: Option<String> = None;
 
     while rw.is_open() {
@@ -134,7 +132,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                                 match start_recording(
                                     &mut driver,
                                     &devices[selected_dev_idx],
-                                    desired_channel_count,
                                     desired_sample_rate,
                                 ) {
                                     Ok(()) => {
@@ -157,7 +154,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                             mode = Mode::SetSampleRate;
                         }
                         Key::C => {
-                            input_buf = desired_channel_count.to_string();
+                            input_buf = driver.channel_count().to_string();
                             mode = Mode::SetChannelCount;
                         }
                         Key::E => {
@@ -183,9 +180,28 @@ fn main() -> Result<(), Box<dyn Error>> {
                     Mode::SetSampleRate => {
                         if code == Key::Enter {
                             match input_buf.parse::<u32>() {
+                                Ok(_) if started => {
+                                    status = Some(
+                                        "Stop recording before changing the sample rate."
+                                            .to_string(),
+                                    );
+                                }
                                 Ok(sample_rate) => {
-                                    desired_sample_rate = sample_rate;
-                                    status = None;
+                                    // SFML only checks a sample rate when capture starts, so
+                                    // start a short capture to find out if it is accepted.
+                                    match start_recording(
+                                        &mut driver,
+                                        &devices[selected_dev_idx],
+                                        sample_rate,
+                                    ) {
+                                        Ok(()) => {
+                                            driver.stop();
+                                            while recv.try_recv().is_ok() {}
+                                            desired_sample_rate = sample_rate;
+                                            status = None;
+                                        }
+                                        Err(e) => status = Some(e.to_string()),
+                                    }
                                 }
                                 Err(e) => status = Some(format!("Invalid sample rate: {e}")),
                             }
@@ -195,9 +211,17 @@ fn main() -> Result<(), Box<dyn Error>> {
                     Mode::SetChannelCount => {
                         if code == Key::Enter {
                             match input_buf.parse::<u32>() {
+                                Ok(_) if started => {
+                                    status = Some(
+                                        "Stop recording before changing the channel count."
+                                            .to_string(),
+                                    );
+                                }
                                 Ok(channel_count) => {
-                                    desired_channel_count = channel_count;
-                                    status = None;
+                                    status = driver
+                                        .set_channel_count(channel_count)
+                                        .err()
+                                        .map(|e| e.to_string());
                                 }
                                 Err(e) => status = Some(format!("Invalid channel count: {e}")),
                             }
@@ -234,7 +258,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 _ => {}
             }
         }
-        if let Ok(samples) = recv.try_recv() {
+        while let Ok(samples) = recv.try_recv() {
             samp_accum.extend_from_slice(&samples);
             samp_buf = samples;
         }
@@ -260,7 +284,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 w!(
                     "{} @ {} Hz\n{} samples, {} channels, {} bytes recorded",
                     driver.device(),
-                    driver.sample_rate(),
+                    desired_sample_rate,
                     samp_buf.len(),
                     driver.channel_count(),
                     samp_accum.len() * 2,
