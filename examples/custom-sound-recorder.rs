@@ -1,6 +1,7 @@
 use {
     sfml::{
-        audio::{Sound, SoundBuffer, SoundChannel, SoundRecorder, SoundRecorderDriver, capture},
+        audio::{Sound, SoundBuffer, SoundRecorder, SoundRecorderDriver, capture},
+        cpp::CppString,
         graphics::{Color, Font, RectangleShape, RenderTarget, RenderWindow, Text, Transformable},
         window::{Event, Key, Style},
     },
@@ -54,6 +55,18 @@ impl<'font> TextWriter<'font> {
     }
 }
 
+fn start_recording(
+    driver: &mut SoundRecorderDriver<'_, MyRecorder>,
+    device: &CppString,
+    channel_count: u32,
+    sample_rate: u32,
+) -> Result<(), Box<dyn Error>> {
+    driver.set_device(device.to_str()?)?;
+    driver.set_channel_count(channel_count)?;
+    driver.start(sample_rate)?;
+    Ok(())
+}
+
 enum Mode {
     Main,
     SetDevice,
@@ -92,6 +105,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut input_buf = String::new();
     let mut desired_sample_rate = 44_100;
     let mut desired_channel_count = 2;
+    let mut status: Option<String> = None;
 
     while rw.is_open() {
         while let Some(ev) = rw.poll_event() {
@@ -103,19 +117,32 @@ fn main() -> Result<(), Box<dyn Error>> {
                             if started {
                                 driver.stop();
                                 sound = None;
-                                snd_buf.load_from_samples(
+                                match snd_buf.load_from_samples(
                                     &samp_accum[..],
-                                    desired_channel_count,
-                                    desired_sample_rate,
-                                    &[SoundChannel::Mono],
-                                )?;
-                                samp_accum.clear();
+                                    driver.channel_count(),
+                                    driver.sample_rate(),
+                                    driver.channel_map(),
+                                ) {
+                                    Ok(()) => {
+                                        samp_accum.clear();
+                                        status = None;
+                                    }
+                                    Err(e) => status = Some(e.to_string()),
+                                }
                                 started = false;
                             } else {
-                                driver.set_device(devices[selected_dev_idx].to_str()?)?;
-                                driver.set_channel_count(desired_channel_count);
-                                driver.start(desired_sample_rate)?;
-                                started = true;
+                                match start_recording(
+                                    &mut driver,
+                                    &devices[selected_dev_idx],
+                                    desired_channel_count,
+                                    desired_sample_rate,
+                                ) {
+                                    Ok(()) => {
+                                        started = true;
+                                        status = None;
+                                    }
+                                    Err(e) => status = Some(e.to_string()),
+                                }
                             }
                         }
                         Key::P => {
@@ -155,19 +182,34 @@ fn main() -> Result<(), Box<dyn Error>> {
                     },
                     Mode::SetSampleRate => {
                         if code == Key::Enter {
-                            desired_sample_rate = input_buf.parse()?;
+                            match input_buf.parse::<u32>() {
+                                Ok(sample_rate) => {
+                                    desired_sample_rate = sample_rate;
+                                    status = None;
+                                }
+                                Err(e) => status = Some(format!("Invalid sample rate: {e}")),
+                            }
                             mode = Mode::Main;
                         }
                     }
                     Mode::SetChannelCount => {
                         if code == Key::Enter {
-                            desired_channel_count = input_buf.parse()?;
+                            match input_buf.parse::<u32>() {
+                                Ok(channel_count) => {
+                                    desired_channel_count = channel_count;
+                                    status = None;
+                                }
+                                Err(e) => status = Some(format!("Invalid channel count: {e}")),
+                            }
                             mode = Mode::Main;
                         }
                     }
                     Mode::Export => {
                         if code == Key::Enter {
-                            snd_buf.save_to_file(&input_buf)?;
+                            match snd_buf.save_to_file(&input_buf) {
+                                Ok(()) => status = None,
+                                Err(e) => status = Some(e.to_string()),
+                            }
                             mode = Mode::Main;
                         }
                     }
@@ -212,6 +254,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "Press R to start recording. Press P to play the recording."
                 };
                 w!("{s}");
+                if let Some(msg) = &status {
+                    w!("Error: {msg}");
+                }
                 w!(
                     "{} @ {} Hz\n{} samples, {} channels, {} bytes recorded",
                     driver.device(),
