@@ -13,6 +13,7 @@ use {
 pub struct SfStr(U32CStr);
 
 impl SfStr {
+    #[cfg(feature = "window")]
     pub(crate) unsafe fn from_ptr_str<'a>(p: *const u32) -> &'a Self {
         unsafe {
             let ptr: *const U32CStr = U32CStr::from_ptr_str(p);
@@ -40,6 +41,7 @@ impl SfStr {
         }
     }
 
+    #[cfg(feature = "window")]
     pub(crate) fn as_ptr(&self) -> *const u32 {
         self.0.as_ptr()
     }

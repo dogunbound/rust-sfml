@@ -1,4 +1,4 @@
-pub use crate::ffi::*;
+pub(crate) use crate::ffi::*;
 use crate::{
     system::SfString as sfString,
     window::{VideoMode as sfVideoMode, joystick::Identification as sfJoystickIdentification},

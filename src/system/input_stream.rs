@@ -11,7 +11,6 @@ use {
     },
 };
 
-#[expect(clippy::comparison_chain)]
 unsafe extern "C" fn read<T: Read + Seek>(
     data: *mut c_void,
     size: c_longlong,
@@ -64,6 +63,7 @@ unsafe extern "C" fn seek<T: Read + Seek>(
 /// Type that allows you to create an SFML input stream from a `Read + Seek` source.
 #[derive(Debug)]
 pub struct InputStream<'src, T> {
+    #[cfg_attr(not(any(feature = "audio", feature = "graphics")), expect(dead_code))]
     pub(crate) stream: FBox<sfInputStreamHelper>,
     _source: Option<Box<T>>,
     _marker: PhantomData<&'src mut T>,

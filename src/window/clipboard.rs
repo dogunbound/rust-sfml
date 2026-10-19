@@ -41,6 +41,7 @@ pub fn set_string<S: SfStrConv>(string: S) {
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]
+#[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn identity_test() {
     set_string("Hello world");
     assert_eq!(&get_string(), "Hello world");

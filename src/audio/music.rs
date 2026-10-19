@@ -111,7 +111,6 @@ impl<'src, S> Music<'src, S> {
             .into_sf_result()
             .map(|_| {
                 self.stream = Some(stream);
-                ()
             })
 
     }
