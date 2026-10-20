@@ -379,18 +379,15 @@ impl SoundBufferRecorder {
     }
 }
 
-#[cfg(test)]
-struct NullRecorder;
-
-#[cfg(test)]
-impl SoundRecorder for NullRecorder {
-    fn on_process_samples(&mut self, _samples: &[i16]) -> bool {
-        true
-    }
-}
-
-#[test]
+#[cfg_attr(not(feature = "ci-headless"), test)]
 fn test_driver_channel_count_is_checked_by_sfml() {
+    struct NullRecorder;
+    impl SoundRecorder for NullRecorder {
+        fn on_process_samples(&mut self, _samples: &[i16]) -> bool {
+            true
+        }
+    }
+
     let mut recorder = NullRecorder;
     let mut driver = SoundRecorderDriver::new(&mut recorder);
     assert!(matches!(
@@ -406,7 +403,7 @@ fn test_driver_channel_count_is_checked_by_sfml() {
     assert_eq!(driver.channel_map().len(), 2);
 }
 
-#[test]
+#[cfg_attr(not(feature = "ci-headless"), test)]
 fn test_buffer_recorder_channel_count_is_checked_by_sfml() {
     let mut recorder = SoundBufferRecorder::new();
     assert!(matches!(
