@@ -335,6 +335,15 @@ fn main() {
         build_lib_path.display()
     );
     println!("cargo:rustc-link-lib=static=rcsfml");
+    if feat_graphics {
+        link_sfml_subsystem("graphics");
+    }
+    if feat_window {
+        link_sfml_subsystem("window");
+    }
+    if feat_audio {
+        link_sfml_subsystem("audio");
+    }
     link_sfml_subsystem("system");
     if is_unix && is_linux {
         static_link_linux(feat_window, feat_audio, feat_graphics, flac_ogg_linkage);
@@ -367,15 +376,6 @@ fn main() {
         println!("cargo::rustc-link-arg=-ObjC");
     } else {
         panic!("Uhhh... Can't determine your environment. Sorry.");
-    }
-    if feat_audio {
-        link_sfml_subsystem("audio");
-    }
-    if feat_window {
-        link_sfml_subsystem("window");
-    }
-    if feat_graphics {
-        link_sfml_subsystem("graphics");
     }
 }
 
