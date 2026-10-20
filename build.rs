@@ -59,6 +59,7 @@ fn static_link_windows(
         println!("cargo:rustc-link-lib=dylib=gdi32");
     }
     if feat_graphics {
+        println!("cargo:rustc-link-lib=static=harfbuzz");
         println!("cargo:rustc-link-lib=static=freetype");
     }
     if feat_audio {
