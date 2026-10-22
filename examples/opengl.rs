@@ -136,6 +136,7 @@ fn main() -> SfResult<()> {
                     } => {
                         srgb = !srgb;
                         window.close();
+                        break;
                     }
                     Event::Resized { size } => {
                         window.set_active(true)?;
@@ -146,6 +147,9 @@ fn main() -> SfResult<()> {
                     }
                     _ => {}
                 }
+            }
+            if !window.is_open() {
+                break;
             }
             window.push_gl_states();
             window.draw(&bg_sprite);
