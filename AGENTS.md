@@ -59,12 +59,27 @@ If you plan to modify code in these directories, you must also read their `AGENT
 - Add user-facing changes under `## New` at the top of `CHANGELOG.md` (Added / Changed / Fixed / Removed).
 - A typical API addition touches, in order: `CSFML/src/<Module>/*.cpp`, then `src/ffi/` (regenerate the `*_bindgen.rs` files, see Architecture), then the safe wrapper in `src/<module>/` (plus its `rc_*` twin), then `CHANGELOG.md`.
 
+## Commits
+
+- When a task is complete, commit the changes you made for it. Don't leave completed work uncommitted.
+- Each commit must contain a single idea. A feature change that spans layers is one idea: for example, a C++ `Text` change that also requires updates in `CSFML/src/Graphics/Text.cpp`, `src/ffi/graphics.rs`, `src/ffi/graphics_bindgen.rs`, `src/graphics/text.rs`, `src/graphics/rc_text.rs`, and `CHANGELOG.md` belongs in one commit.
+- Split independent ideas into separate commits. Keep unrelated fixes, refactors, and formatting changes out of the commit.
+- Follow these commit message rules:
+  - Separate the subject from the body with a blank line.
+  - Limit the subject line to 50 characters.
+  - Capitalize the subject line.
+  - Do not end the subject line with a period.
+  - Use the imperative mood in the subject line.
+  - Wrap the body at 72 characters.
+  - Use the body to explain what and why vs. how.
+
 ## Definition of done
 
-A task is not complete until all of these pass:
+A task is not complete until all of these are true:
 
 - Rustfmt: run `rustfmt +stable --edition 2024` on every Rust file you touched (see Commands for why not the whole crate).
 - Clippy: `cargo clippy --all-targets --features ci-headless` shows no new warnings compared to before your change.
 - Tests: `cargo test --features ci-headless` passes.
+- Commits: the changes for the task are committed, one idea per commit (see Commits).
 
 If any step fails and you can't fix it, say so explicitly in your report instead of declaring the task complete.
