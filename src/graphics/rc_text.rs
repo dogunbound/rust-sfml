@@ -61,6 +61,15 @@ impl RcText {
     /// * string - The string of the `RcText`
     /// * font - The [`RcFont`] to display the `RcText`
     /// * characterSize - The size of the `RcText`
+    ///
+    /// ```
+    /// use sfml::graphics::{RcFont, RcText};
+    ///
+    /// let font = RcFont::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let text = RcText::new("Hello, SFML!", &font, 24);
+    /// assert_eq!(text.string().to_rust_string(), "Hello, SFML!");
+    /// assert_eq!(text.character_size(), 24);
+    /// ```
     pub fn new<S: SfStrConv>(string: S, font: &RcFont, character_size: u32) -> Self {
         let text = string.with_as_sfstr(|sfstr| unsafe {
             ffi::sfText_new(font.raw_font(), sfstr.as_ptr(), character_size)

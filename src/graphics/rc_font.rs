@@ -322,6 +322,12 @@ impl RcFont {
     }
 
     /// Check if the font has anti-aliasing enabled/disabled
+    ///
+    /// ```
+    /// # use sfml::graphics::RcFont;
+    /// # let font = RcFont::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.is_smooth());
+    /// ```
     #[must_use]
     pub fn is_smooth(&self) -> bool {
         self.font.borrow().is_smooth()
@@ -331,6 +337,14 @@ impl RcFont {
     ///
     /// # Arguments
     /// * `smooth` - True to enable smoothing, false to disable smoothing
+    ///
+    /// ```
+    /// # use sfml::graphics::RcFont;
+    /// let mut font = RcFont::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.is_smooth());
+    /// font.set_smooth(false);
+    /// assert!(!font.is_smooth());
+    /// ```
     pub fn set_smooth(&mut self, smooth: bool) {
         self.font.borrow_mut().set_smooth(smooth);
     }

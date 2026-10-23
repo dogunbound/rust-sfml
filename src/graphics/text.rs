@@ -27,6 +27,22 @@ use {
 /// and draw all the text you want with it. You can change its properties using
 /// `set_font`, `set_position`, `set_string`, etc., before drawing it, as many times as you need
 /// to.
+///
+/// # Examples
+///
+/// ```
+/// use sfml::graphics::{Font, Text, TextStyle, Transformable};
+/// use sfml::system::Vector2f;
+///
+/// let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+/// let mut text = Text::new("Hello, SFML!", &font, 24);
+/// text.set_style(TextStyle::BOLD | TextStyle::ITALIC);
+/// text.set_position(Vector2f::new(10., 20.));
+///
+/// assert_eq!(text.character_size(), 24);
+/// assert!(text.style().contains(TextStyle::BOLD));
+/// assert_eq!(text.position(), Vector2f::new(10., 20.));
+/// ```
 #[derive(Debug)]
 pub struct Text<'s> {
     handle: NonNull<ffi::sfText>,
@@ -48,6 +64,13 @@ impl<'s> Text<'s> {
     /// * string - The string of the text
     /// * font - The font to display the Text
     /// * characterSize - The size of the Text
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text};
+    /// let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let text = Text::new("Hello", &font, 30);
+    /// assert_eq!(text.character_size(), 30);
+    /// ```
     pub fn new<S: SfStrConv>(string: S, font: &'s Font, character_size: u32) -> Text<'s> {
         let text = string.with_as_sfstr(|sfstr| unsafe {
             ffi::sfText_new(font, sfstr.as_ptr(), character_size)
@@ -65,6 +88,14 @@ impl<'s> Text<'s> {
     ///
     /// # Arguments
     /// * string - New string
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("", &font, 30);
+    /// text.set_string("Hello");
+    /// assert_eq!(text.string().to_rust_string(), "Hello");
+    /// ```
     pub fn set_string<S: SfStrConv>(&mut self, string: S) {
         string.with_as_sfstr(|sfstr| unsafe {
             ffi::sfText_setUnicodeString(self.handle.as_ptr(), sfstr.as_ptr());
@@ -98,6 +129,13 @@ impl<'s> Text<'s> {
     /// use it, the behaviour is undefined.
     ///
     /// font - New font
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text};
+    /// let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// assert!(text.font().is_some());
+    /// ```
     pub fn set_font(&mut self, font: &'s Font) {
         unsafe { ffi::sfText_setFont(self.handle.as_ptr(), font) }
     }
@@ -110,6 +148,16 @@ impl<'s> Text<'s> {
     ///
     /// # Arguments
     /// * style - New style
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text, TextStyle};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_style(TextStyle::BOLD | TextStyle::UNDERLINED);
+    /// assert!(text.style().contains(TextStyle::BOLD));
+    /// assert!(text.style().contains(TextStyle::UNDERLINED));
+    /// assert!(!text.style().contains(TextStyle::ITALIC));
+    /// ```
     pub fn set_style(&mut self, style: TextStyle) {
         unsafe { ffi::sfText_setStyle(self.handle.as_ptr(), style.bits()) }
     }
@@ -120,6 +168,14 @@ impl<'s> Text<'s> {
     ///
     /// # Arguments
     /// * size - The new character size, in pixels
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_character_size(48);
+    /// assert_eq!(text.character_size(), 48);
+    /// ```
     pub fn set_character_size(&mut self, size: u32) {
         unsafe { ffi::sfText_setCharacterSize(self.handle.as_ptr(), size) }
     }
@@ -145,6 +201,14 @@ impl<'s> Text<'s> {
     ///
     /// By default, the text's fill color is opaque white. Setting the fill color to a transparent
     /// color with an outline will cause the outline to be displayed in the fill area of the text.
+    ///
+    /// ```
+    /// # use sfml::graphics::{Color, Font, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_fill_color(Color::RED);
+    /// assert_eq!(text.fill_color(), Color::RED);
+    /// ```
     pub fn set_fill_color(&mut self, color: Color) {
         unsafe { ffi::sfText_setFillColor(self.handle.as_ptr(), color) }
     }
@@ -203,6 +267,14 @@ impl<'s> Text<'s> {
     ///
     /// # Arguments
     /// * alignment - New line alignment
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, LineAlignment, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_line_alignment(LineAlignment::Center);
+    /// assert_eq!(text.line_alignment(), LineAlignment::Center);
+    /// ```
     pub fn set_line_alignment(&mut self, alignment: LineAlignment) {
         unsafe { ffi::sfText_setLineAlignment(self.handle.as_ptr(), alignment) }
     }
@@ -220,6 +292,14 @@ impl<'s> Text<'s> {
     ///
     /// # Arguments
     /// * orientation - New text orientation
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text, TextOrientation};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_text_orientation(TextOrientation::TopToBottom);
+    /// assert_eq!(text.text_orientation(), TextOrientation::TopToBottom);
+    /// ```
     pub fn set_text_orientation(&mut self, orientation: TextOrientation) {
         unsafe { ffi::sfText_setTextOrientation(self.handle.as_ptr(), orientation) }
     }
@@ -236,6 +316,14 @@ impl<'s> Text<'s> {
     ///
     /// # Arguments
     /// * `cluster_grouping` - New cluster grouping algorithm
+    ///
+    /// ```
+    /// # use sfml::graphics::{ClusterGrouping, Font, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_cluster_grouping(ClusterGrouping::Grapheme);
+    /// assert_eq!(text.cluster_grouping(), ClusterGrouping::Grapheme);
+    /// ```
     pub fn set_cluster_grouping(&mut self, cluster_grouping: ClusterGrouping) {
         unsafe { ffi::sfText_setClusterGrouping(self.handle.as_ptr(), cluster_grouping) }
     }
@@ -336,6 +424,14 @@ impl<'s> Text<'s> {
     /// The default spacing between lines is defined by the font.
     /// This method enables you to set a factor for the spacing between lines.
     /// By default the line spacing factor is 1.
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_line_spacing(1.5);
+    /// assert_eq!(text.line_spacing(), 1.5);
+    /// ```
     pub fn set_line_spacing(&mut self, factor: f32) {
         unsafe { ffi::sfText_setLineSpacing(self.handle.as_ptr(), factor) }
     }
@@ -351,6 +447,14 @@ impl<'s> Text<'s> {
     /// it rather adds a fixed space between them which is calculated from the font metrics and
     /// the character size. Note that factors below 1 (including negative numbers) bring
     /// characters closer to each other. By default the letter spacing factor is 1.
+    ///
+    /// ```
+    /// # use sfml::graphics::{Font, Text};
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = Text::new("Hello", &font, 30);
+    /// text.set_letter_spacing(2.);
+    /// assert_eq!(text.letter_spacing(), 2.);
+    /// ```
     pub fn set_letter_spacing(&mut self, factor: f32) {
         unsafe { ffi::sfText_setLetterSpacing(self.handle.as_ptr(), factor) }
     }

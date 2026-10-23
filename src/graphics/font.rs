@@ -66,6 +66,12 @@ impl Font {
     /// Creates a new `Font` from a file on the filesystem.
     ///
     /// See [`Self::load_from_file`].
+    ///
+    /// ```
+    /// # use sfml::graphics::Font;
+    /// let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.has_glyph('A' as u32));
+    /// ```
     pub fn from_file(path: &str) -> SfResult<FBox<Self>> {
         let mut new = Self::new()?;
         new.open_from_file(path)?;
@@ -100,6 +106,14 @@ impl Font {
     /// # Safety
     ///
     /// Also see [`Self::load_from_stream`].
+    ///
+    /// ```
+    /// # use sfml::graphics::Font;
+    /// let mut stream = std::fs::File::open("examples/resources/sansation.ttf")
+    ///     .expect("failed to open font file");
+    /// let font = unsafe { Font::from_stream(&mut stream) }.expect("failed to load font");
+    /// assert!(font.has_glyph('A' as u32));
+    /// ```
     pub unsafe fn from_stream<T: Read + Seek>(stream: &mut T) -> SfResult<FBox<Self>> {
         let mut new = Self::new()?;
         unsafe {
@@ -327,6 +341,12 @@ impl Font {
     /// default character, it might be useful to verify whether specific
     /// code points are included to determine whether a font is suited
     /// to display text in a specific language.
+    ///
+    /// ```
+    /// # use sfml::graphics::Font;
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.has_glyph('A' as u32));
+    /// ```
     #[must_use]
     pub fn has_glyph(&self, codepoint: u32) -> bool {
         unsafe { ffi::sfFont_hasGlyph(self, codepoint) }
@@ -395,6 +415,12 @@ impl Font {
     }
 
     /// Tell whether the smooth filter is enabled or not.
+    ///
+    /// ```
+    /// # use sfml::graphics::Font;
+    /// # let font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.is_smooth());
+    /// ```
     #[must_use]
     pub fn is_smooth(&self) -> bool {
         unsafe { ffi::sfFont_isSmooth(self) }
@@ -408,6 +434,14 @@ impl Font {
     ///
     /// # Arguments
     /// * `smooth` - True to enable smoothing, false to disable smoothing
+    ///
+    /// ```
+    /// # use sfml::graphics::Font;
+    /// let mut font = Font::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.is_smooth());
+    /// font.set_smooth(false);
+    /// assert!(!font.is_smooth());
+    /// ```
     pub fn set_smooth(&mut self, smooth: bool) {
         unsafe { ffi::sfFont_setSmooth(self, smooth) }
     }
