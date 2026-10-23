@@ -27,7 +27,8 @@ If you plan to modify code in these directories, you must also read their `AGENT
   - `cargo test --no-default-features --features ci-headless[,audio | ,window | ,graphics | ,audio,build-flac-ogg]`
   - `cargo package`
 - Clippy: `cargo clippy --all-targets --features ci-headless`. CI doesn't run it. It exits 0 with some pre-existing warnings.
-- Rust formatting: use stable rustfmt. `rustfmt.toml` sets a couple of nightly-only options, which stable ignores with a warning. 7 files currently differ under stable, so don't format the whole crate. Format only the files you touch: `rustfmt +stable --edition 2024 <file>`. Never format `src/ffi/*_bindgen.rs`; they're generated and `include!`d, so rustfmt doesn't reach them anyway.
+- Rust formatting: use stable rustfmt; `rustfmt.toml` is kept free of nightly-only options. Format only the files you touch: `rustfmt +stable --edition 2024 <file>`. Never format `src/ffi/*_bindgen.rs`; they're generated (`#[rustfmt::skip]` protects them) and `include!`d, so rustfmt doesn't reach them anyway.
+- Git hooks: `.githooks/` is enabled through `core.hooksPath`. Its `pre-commit` hook formats all tracked Rust files with `rustfmt` and stages the result; it is a no-op when `rustfmt` is not installed. The generated `src/ffi/*_bindgen.rs` files are protected by `#[rustfmt::skip]`. Unlike the manual command above, the hook can reformat files you did not otherwise touch.
 - C++ formatting: `clang-format -i <file>` on touched files. `CSFML/format.sh` reformats all of `CSFML/src` (run it from `CSFML/`).
 - Examples: `cargo run --example <name>`. They need a display or audio device. Examples that `include!("../example_common.rs")` chdir into `examples/resources`.
 
