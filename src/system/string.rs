@@ -33,7 +33,9 @@ impl SfStr {
 
     /// Convert to a UTF-8 `String` from the Rust standard library.
     ///
-    /// Returns a `Result` and errors if the string is not valid UTF-32
+    /// # Errors
+    ///
+    /// Returns [`SfStrConvError`] if the string is not valid UTF-32.
     pub fn try_to_rust_string(&self) -> Result<String, SfStrConvError> {
         match self.0.to_string() {
             Ok(string) => Ok(string),
@@ -87,7 +89,16 @@ impl SfStrConv for &String {
     }
 }
 
-/// Errors which can occur when attempting to translate from UTF-32 to UTF-8
+/// Errors which can occur when attempting to translate from UTF-32 to UTF-8.
+///
+/// This is the error type returned by [`SfStr::try_to_rust_string`].
+///
+/// ```
+/// use sfml::system::SfStrConvError;
+///
+/// fn assert_error<T: std::error::Error>() {}
+/// assert_error::<SfStrConvError>();
+/// ```
 #[derive(Debug)]
 pub struct SfStrConvError(Utf32Error);
 
@@ -97,6 +108,7 @@ impl SfStrConvError {
     }
 
     /// Returns the index in the string where the conversion error occured
+    #[must_use]
     pub fn index(&self) -> usize {
         self.0.index()
     }

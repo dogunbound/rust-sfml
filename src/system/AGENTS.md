@@ -4,7 +4,7 @@ Foundation types shared by all modules.
 
 ## Files
 
-- `mod.rs`: module root. Declares the submodules and re-exports the public types and functions (`Angle`, `Clock`, `InputStream`, `sleep`, `SfStr`, `SfStrConv`, `SfString`, `Time`, `Vector2*`, `Vector3*`, `Version`, `version`).
+- `mod.rs`: module root. Declares the submodules and re-exports the public types and functions (`Angle`, `Clock`, `InputStream`, `sleep`, `SfStr`, `SfStrConv`, `SfStrConvError`, `SfString`, `Time`, `Vector2*`, `Vector3*`, `Version`, `version`).
 - `angle.rs`: `Angle`, an angle stored in radians with degree/radian conversions, arithmetic, and wrapping.
 - `buffer.rs`: `Buffer` (crate-private), a read-only byte view over an SFML-owned `sfBuffer`. Derefs to `[u8]` and frees the buffer on drop.
 - `clock.rs`: `Clock`, a wrapper around `sfClock` for measuring elapsed time.

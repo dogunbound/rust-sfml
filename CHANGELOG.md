@@ -29,6 +29,7 @@
 - `VideoMode::fullscreen_modes`, `SoundBuffer::channel_map`, `Music::channel_map`, `SoundStreamPlayer::channel_map`, `SoundRecorderDriver::channel_map`, and `SoundBufferRecorder::channel_map` now return `&[T]` instead of `&cpp::CppVector<T>`. Channel maps borrowed from `SoundBuffer`, `Music`, and `SoundStreamPlayer` are now tied to the object lifetime instead of `'static`
 
 ### Fixed
+- Re-export `system::SfStrConvError`, so the error type returned by `SfStr::try_to_rust_string` can be named by users
 - Fix undefined behavior when dereferencing an empty `cpp::CppVector`
 - Fix `SoundBuffer::load_from_samples` always failing with `CallFailed`, and custom `SoundStream` channel maps having twice the requested length. The C++ shim filled the channel map with placeholder entries before copying the real ones
 - Fix every element of `cpp::CppVector<cpp::CppString>` being the first element. `CppVector<CppString>` no longer derefs to a slice, since a `CppString` can't be sliced
