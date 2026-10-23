@@ -2,7 +2,7 @@ use {
     super::sound_channel::SoundChannel,
     crate::{
         IntoSfResult, SfResult,
-        cpp::{CppVector, FBox},
+        cpp::FBox,
         ffi::{self},
         system::{InputStream, Time},
     },
@@ -182,7 +182,7 @@ impl SoundBuffer {
     ///
     /// Return Map of position in sample frame to sound channel
     #[must_use]
-    pub fn channel_map(&self) -> &'static CppVector<SoundChannel> {
+    pub fn channel_map(&self) -> &[SoundChannel] {
         unsafe { &*ffi::audio::sfSoundBuffer_getChannelMap(self) }
     }
 

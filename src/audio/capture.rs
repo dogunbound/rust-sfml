@@ -2,7 +2,7 @@ use {
     crate::{
         IntoSfResult, SfError, SfResult,
         audio::{SoundBuffer, SoundChannel},
-        cpp::{CppVector, FBox},
+        cpp::FBox,
         ffi::audio as ffi,
     },
     std::{ffi::CString, os::raw::c_void, ptr::NonNull},
@@ -206,7 +206,7 @@ impl<'a, R: SoundRecorder> SoundRecorderDriver<'a, R> {
     ///
     /// It has one entry per channel, so its length matches [`channel_count`](Self::channel_count).
     #[must_use]
-    pub fn channel_map(&self) -> &CppVector<SoundChannel> {
+    pub fn channel_map(&self) -> &[SoundChannel] {
         unsafe { &*ffi::sfCustomSoundRecorder_getChannelMap(self.handle.as_ptr()) }
     }
     /// Get the name of the current audio capture device.
@@ -353,7 +353,7 @@ impl SoundBufferRecorder {
     ///
     /// It has one entry per channel, so its length matches [`channel_count`](Self::channel_count).
     #[must_use]
-    pub fn channel_map(&self) -> &CppVector<SoundChannel> {
+    pub fn channel_map(&self) -> &[SoundChannel] {
         unsafe { &*ffi::sfSoundBufferRecorder_getChannelMap(self.handle.as_ptr()) }
     }
 

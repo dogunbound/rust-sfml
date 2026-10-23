@@ -1,7 +1,6 @@
 use {
     super::{sound_channel::SoundChannel, sound_source::SoundSource},
     crate::{
-        cpp::CppVector,
         ffi::audio::{
             effect_processor_trampoline, sfCustomSoundStream, sfCustomSoundStream_del,
             sfCustomSoundStream_getAttenuation, sfCustomSoundStream_getChannelCount,
@@ -192,7 +191,7 @@ impl<'a, S: SoundStream> SoundStreamPlayer<'a, S> {
     ///
     /// Return Map of position in sample frame to sound channel
     #[must_use]
-    pub fn channel_map(&self) -> &'static CppVector<SoundChannel> {
+    pub fn channel_map(&self) -> &[SoundChannel] {
         unsafe { &*sfCustomSoundStream_getChannelMap(self.handle.as_ptr()) }
     }
     /// Tell whether or not the stream is in loop mode.

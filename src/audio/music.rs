@@ -3,7 +3,6 @@ use {
     crate::{
         IntoSfResult, SfResult,
         audio::TimeSpan,
-        cpp::CppVector,
         ffi,
         system::{InputStream, Time, Vector3f},
     },
@@ -234,7 +233,7 @@ impl<S> Music<'_, S> {
     ///
     /// Return Map of position in sample frame to sound channel
     #[must_use]
-    pub fn channel_map(&self) -> &'static CppVector<SoundChannel> {
+    pub fn channel_map(&self) -> &[SoundChannel] {
         unsafe { &*ffi::audio::sfMusic_getChannelMap(self.music) }
     }
 

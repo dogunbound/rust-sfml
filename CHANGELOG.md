@@ -26,6 +26,7 @@
 - `Shape` has two new required methods, `set_miter_limit` and `miter_limit`, so types that implement `Shape` outside this crate must add them
 - `RenderTarget` has a new required method, `draw_vertex_buffer_range`, so types that implement `RenderTarget` outside this crate must add it
 - `audio::capture::{default_device, available_devices}`, `SoundRecorderDriver::device`, `SoundBufferRecorder::device`, and `audio::playback_device::{available_devices, default_device, device}` now return `String`/`Vec<String>`/`Option<String>` instead of `cpp::CppString`/`cpp::CppVector<cpp::CppString>`. Device names are decoded as UTF-8, with invalid sequences replaced by `U+FFFD`
+- `VideoMode::fullscreen_modes`, `SoundBuffer::channel_map`, `Music::channel_map`, `SoundStreamPlayer::channel_map`, `SoundRecorderDriver::channel_map`, and `SoundBufferRecorder::channel_map` now return `&[T]` instead of `&cpp::CppVector<T>`. Channel maps borrowed from `SoundBuffer`, `Music`, and `SoundStreamPlayer` are now tied to the object lifetime instead of `'static`
 
 ### Fixed
 - Fix undefined behavior when dereferencing an empty `cpp::CppVector`

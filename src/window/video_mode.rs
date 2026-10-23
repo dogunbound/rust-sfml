@@ -75,9 +75,9 @@ impl VideoMode {
     /// the first element will always give the best mode (higher
     /// `width`, `height` and `bits_per_pixel`).
     ///
-    /// Return a vector containing all the supported `VideoMode`s
+    /// Return a slice containing all the supported `VideoMode`s
     #[must_use]
-    pub fn fullscreen_modes() -> &'static CppVector<Self> {
+    pub fn fullscreen_modes() -> &'static [Self] {
         unsafe { &*ffi::sfVideoMode_getFullscreenModes() }
     }
 }
