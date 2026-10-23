@@ -15,12 +15,30 @@ decl_opaque! {
 /// This is a very powerful concept: you can scroll,
 /// rotate or zoom the entire scene without altering
 /// the way that your drawable objects are drawn.
+///
+/// # Examples
+///
+/// ```
+/// use sfml::graphics::View;
+/// use sfml::system::Vector2f;
+///
+/// let view = View::new().expect("failed to create view");
+/// assert_eq!(view.center(), Vector2f::new(500., 500.));
+/// assert_eq!(view.size(), Vector2f::new(1000., 1000.));
+/// ```
 pub View;
 }
 
 /// Creation
 impl View {
     /// Creates a default `View` of (0, 0, 1000, 1000)
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Vector2f;
+    /// let view = View::new().expect("failed to create view");
+    /// assert_eq!(view.size(), Vector2f::new(1000., 1000.));
+    /// ```
     pub fn new() -> SfResult<FBox<Self>> {
         FBox::new(unsafe { ffi::sfView_new() }).into_sf_result()
     }
@@ -29,6 +47,17 @@ impl View {
     /// # Arguments
     /// * center - The center of the view
     /// * size - The size of the view
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Vector2f;
+    /// let view = View::with_center_and_size(
+    ///     Vector2f::new(50., 60.),
+    ///     Vector2f::new(100., 120.),
+    /// );
+    /// assert_eq!(view.center(), Vector2f::new(50., 60.));
+    /// assert_eq!(view.size(), Vector2f::new(100., 120.));
+    /// ```
     #[must_use]
     pub fn with_center_and_size(center: Vector2f, size: Vector2f) -> FBox<View> {
         let mut view: FBox<View> = Default::default();
@@ -41,6 +70,15 @@ impl View {
     ///
     /// # Arguments
     /// * rectangle - The rectangle defining the zone to display
+    ///
+    /// ```
+    /// # use sfml::graphics::{FloatRect, View};
+    /// # use sfml::system::Vector2f;
+    /// let rect = FloatRect::new(Vector2f::new(10., 20.), Vector2f::new(30., 40.));
+    /// let view = View::from_rect(rect);
+    /// assert_eq!(view.center(), Vector2f::new(25., 40.));
+    /// assert_eq!(view.size(), Vector2f::new(30., 40.));
+    /// ```
     #[must_use]
     pub fn from_rect(rectangle: FloatRect) -> FBox<View> {
         let mut view: FBox<View> = Default::default();
@@ -56,6 +94,15 @@ impl View {
     /// Get the current orientation of a view
     ///
     /// Return the rotation angle of the view, in degrees
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Angle;
+    /// let mut view = View::new().expect("failed to create view");
+    /// assert_eq!(view.rotation(), 0.);
+    /// view.rotate(Angle::degrees(45.));
+    /// assert_eq!(view.rotation(), 45.);
+    /// ```
     #[must_use]
     pub fn rotation(&self) -> f32 {
         unsafe { ffi::sfView_getRotation(self) }
@@ -63,6 +110,16 @@ impl View {
     /// Get the center of a view
     ///
     /// Return the center of the view
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Vector2f;
+    /// let view = View::with_center_and_size(
+    ///     Vector2f::new(10., 20.),
+    ///     Vector2f::new(100., 100.),
+    /// );
+    /// assert_eq!(view.center(), Vector2f::new(10., 20.));
+    /// ```
     #[must_use]
     pub fn center(&self) -> Vector2f {
         unsafe { ffi::sfView_getCenter(self) }
@@ -71,6 +128,16 @@ impl View {
     /// Get the size of a view
     ///
     /// Return the size of the view
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Vector2f;
+    /// let view = View::with_center_and_size(
+    ///     Vector2f::new(0., 0.),
+    ///     Vector2f::new(640., 480.),
+    /// );
+    /// assert_eq!(view.size(), Vector2f::new(640., 480.));
+    /// ```
     #[must_use]
     pub fn size(&self) -> Vector2f {
         unsafe { ffi::sfView_getSize(self) }
@@ -109,6 +176,15 @@ impl View {
     ///
     /// # Arguments
     /// * angle - Angle to rotate
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Angle;
+    /// let mut view = View::new().expect("failed to create view");
+    /// view.rotate(Angle::degrees(30.));
+    /// view.rotate(Angle::degrees(15.));
+    /// assert_eq!(view.rotation(), 45.);
+    /// ```
     pub fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfView_rotate(self, angle.as_degrees()) }
     }
@@ -125,6 +201,14 @@ impl View {
     ///
     /// # Arguments
     /// * factor - Zoom factor to apply
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Vector2f;
+    /// let mut view = View::new().expect("failed to create view");
+    /// view.zoom(2.);
+    /// assert_eq!(view.size(), Vector2f::new(2000., 2000.));
+    /// ```
     pub fn zoom(&mut self, factor: f32) {
         unsafe { ffi::sfView_zoom(self, factor) }
     }
@@ -149,6 +233,17 @@ impl View {
     ///
     /// # Arguments
     /// * offset - Offset
+    ///
+    /// ```
+    /// # use sfml::graphics::View;
+    /// # use sfml::system::Vector2f;
+    /// let mut view = View::with_center_and_size(
+    ///     Vector2f::new(0., 0.),
+    ///     Vector2f::new(100., 100.),
+    /// );
+    /// view.move_(Vector2f::new(10., 20.));
+    /// assert_eq!(view.center(), Vector2f::new(10., 20.));
+    /// ```
     pub fn move_<O: Into<Vector2f>>(&mut self, offset: O) {
         unsafe { ffi::sfView_move(self, offset.into()) }
     }
@@ -164,6 +259,15 @@ impl View {
     ///
     /// # Arguments
     /// * viewport - New viewport rectangle
+    ///
+    /// ```
+    /// # use sfml::graphics::{FloatRect, View};
+    /// # use sfml::system::Vector2f;
+    /// let mut view = View::new().expect("failed to create view");
+    /// let viewport = FloatRect::new(Vector2f::new(0., 0.), Vector2f::new(0.5, 1.));
+    /// view.set_viewport(viewport);
+    /// assert_eq!(view.viewport(), viewport);
+    /// ```
     pub fn set_viewport(&mut self, viewport: FloatRect) {
         unsafe { ffi::sfView_setViewport(self, viewport) }
     }
@@ -187,6 +291,15 @@ impl View {
     /// # Arguments
     /// * view - View object
     /// * scissor - New scissor rectangle
+    ///
+    /// ```
+    /// # use sfml::graphics::{FloatRect, View};
+    /// # use sfml::system::Vector2f;
+    /// let mut view = View::new().expect("failed to create view");
+    /// let scissor = FloatRect::new(Vector2f::new(0.5, 0.), Vector2f::new(0.5, 1.));
+    /// view.set_scissor(scissor);
+    /// assert_eq!(view.scissor(), scissor);
+    /// ```
     pub fn set_scissor(&mut self, scissor: FloatRect) {
         unsafe { ffi::sfView_setScissor(self, scissor) }
     }

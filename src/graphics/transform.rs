@@ -30,6 +30,15 @@ impl Transform {
     /// - *a20* : Element (2, 0) of the matrix
     /// - *a21* : Element (2, 1) of the matrix
     /// - *a22* : Element (2, 2) of the matrix
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// let transform = Transform::new(1., 2., 3., 4., 5., 6., 7., 8., 9.);
+    /// let matrix = transform.matrix();
+    /// assert_eq!(matrix[0], 1.);
+    /// assert_eq!(matrix[1], 4.);
+    /// assert_eq!(matrix[4], 2.);
+    /// ```
     #[expect(clippy::too_many_arguments)]
     #[must_use]
     pub const fn new(
@@ -57,6 +66,15 @@ impl Transform {
     }
 
     /// The identity transform (does nothing)
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::Vector2f;
+    /// assert_eq!(
+    ///     Transform::IDENTITY.transform_point(Vector2f::new(3., 4.)),
+    ///     Vector2f::new(3., 4.)
+    /// );
+    /// ```
     pub const IDENTITY: Self = Self {
         matrix: [
             1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
@@ -106,6 +124,22 @@ impl Transform {
     ///
     /// # Arguments
     /// * other - Transform to combine to transform
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::Vector2f;
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.translate(Vector2f::new(10., 0.));
+    ///
+    /// let mut other = Transform::IDENTITY;
+    /// other.translate(Vector2f::new(0., 5.));
+    ///
+    /// transform.combine(&other);
+    /// assert_eq!(
+    ///     transform.transform_point(Vector2f::new(0., 0.)),
+    ///     Vector2f::new(10., 5.)
+    /// );
+    /// ```
     pub fn combine(&mut self, other: &Transform) {
         unsafe { ffi::sfTransform_combine(self, other) }
     }
@@ -115,6 +149,17 @@ impl Transform {
     /// # Arguments
     /// * x - Offset to apply on X axis
     /// * y - Offset to apply on Y axis
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::Vector2f;
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.translate(Vector2f::new(10., 20.));
+    /// assert_eq!(
+    ///     transform.transform_point(Vector2f::new(0., 0.)),
+    ///     Vector2f::new(10., 20.)
+    /// );
+    /// ```
     pub fn translate(&mut self, translate: Vector2f) {
         unsafe { ffi::sfTransform_translate(self, translate) }
     }
@@ -123,6 +168,16 @@ impl Transform {
     ///
     /// # Arguments
     /// * angle - Rotation angle, in degrees
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::{Angle, Vector2f};
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.rotate(Angle::degrees(90.));
+    /// let point = transform.transform_point(Vector2f::new(1., 0.));
+    /// assert!((point.x - 0.).abs() < 1e-5);
+    /// assert!((point.y - 1.).abs() < 1e-5);
+    /// ```
     pub fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfTransform_rotate(self, angle.as_degrees()) }
     }
@@ -138,6 +193,16 @@ impl Transform {
     /// * angle - Rotation angle, in degrees
     /// * `center_x` - X coordinate of the center of rotation
     /// * `center_y` - Y coordinate of the center of rotation
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::{Angle, Vector2f};
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.rotate_with_center(Angle::degrees(180.), Vector2f::new(1., 0.));
+    /// let point = transform.transform_point(Vector2f::new(0., 0.));
+    /// assert!((point.x - 2.).abs() < 1e-5);
+    /// assert!(point.y.abs() < 1e-5);
+    /// ```
     pub fn rotate_with_center(&mut self, angle: Angle, center: Vector2f) {
         unsafe { ffi::sfTransform_rotateWithCenter(self, angle.as_degrees(), center) }
     }
@@ -147,6 +212,17 @@ impl Transform {
     /// # Arguments
     /// * `scale_x` - Scaling factor on the X axis
     /// * `scale_y` - Scaling factor on the Y axis
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::Vector2f;
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.scale(Vector2f::new(2., 3.));
+    /// assert_eq!(
+    ///     transform.transform_point(Vector2f::new(1., 1.)),
+    ///     Vector2f::new(2., 3.)
+    /// );
+    /// ```
     pub fn scale(&mut self, scale: Vector2f) {
         unsafe { ffi::sfTransform_scale(self, scale) }
     }
@@ -163,6 +239,17 @@ impl Transform {
     /// * `scale_y` - Scaling factor on Y axis
     /// * `center_x` - X coordinate of the center of scaling
     /// * `center_y` - Y coordinate of the center of scaling
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::Vector2f;
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.scale_with_center(Vector2f::new(2., 2.), Vector2f::new(1., 1.));
+    /// assert_eq!(
+    ///     transform.transform_point(Vector2f::new(2., 1.)),
+    ///     Vector2f::new(3., 1.)
+    /// );
+    /// ```
     pub fn scale_with_center(&mut self, scale: Vector2f, center: Vector2f) {
         unsafe { ffi::sfTransform_scaleWithCenter(self, scale, center) }
     }
@@ -173,6 +260,18 @@ impl Transform {
     /// * point - Point to transform
     ///
     /// Return a transformed point
+    ///
+    /// ```
+    /// # use sfml::graphics::Transform;
+    /// # use sfml::system::{Angle, Vector2f};
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.translate(Vector2f::new(5., 5.));
+    /// transform.scale(Vector2f::new(2., 2.));
+    /// assert_eq!(
+    ///     transform.transform_point(Vector2f::new(1., 0.)),
+    ///     Vector2f::new(7., 5.)
+    /// );
+    /// ```
     #[must_use]
     pub fn transform_point(&self, point: Vector2f) -> Vector2f {
         unsafe { ffi::sfTransform_transformPoint(self, point) }
@@ -190,6 +289,18 @@ impl Transform {
     /// rectangle - Rectangle to transform
     ///
     /// Return the transformed rectangle
+    ///
+    /// ```
+    /// # use sfml::graphics::{FloatRect, Transform};
+    /// # use sfml::system::Vector2f;
+    /// let mut transform = Transform::IDENTITY;
+    /// transform.translate(Vector2f::new(5., 10.));
+    /// let rect = FloatRect::new(Vector2f::new(0., 0.), Vector2f::new(2., 2.));
+    /// assert_eq!(
+    ///     transform.transform_rect(rect),
+    ///     FloatRect::new(Vector2f::new(5., 10.), Vector2f::new(2., 2.))
+    /// );
+    /// ```
     #[must_use]
     pub fn transform_rect(&self, rectangle: FloatRect) -> FloatRect {
         unsafe { ffi::sfTransform_transformRect(self, rectangle) }

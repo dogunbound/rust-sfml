@@ -39,6 +39,13 @@ impl<'s> CircleShape<'s> {
     /// * `point_count` - The number of points to define the `CircleShape`
     ///
     /// Default value on SFML are radius = 0 / pointCount = 30
+    ///
+    /// ```
+    /// # use sfml::graphics::{CircleShape, Shape};
+    /// let circle = CircleShape::new(10., 30);
+    /// assert_eq!(circle.radius(), 10.);
+    /// assert_eq!(circle.point_count(), 30);
+    /// ```
     #[must_use]
     pub fn new(radius: f32, point_count: usize) -> CircleShape<'s> {
         let mut shape = CircleShape::default();

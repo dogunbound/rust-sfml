@@ -34,6 +34,12 @@ impl<'s> ConvexShape<'s> {
     /// # Panics
     ///
     /// Panics if for some reason a `ConvexShape` can't be created.
+    ///
+    /// ```
+    /// # use sfml::graphics::{ConvexShape, Shape};
+    /// let shape = ConvexShape::new(3);
+    /// assert_eq!(shape.point_count(), 3);
+    /// ```
     #[must_use]
     pub fn new(points_count: usize) -> ConvexShape<'s> {
         let shape = unsafe { ffi::sfConvexShape_new() };

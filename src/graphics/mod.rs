@@ -86,6 +86,20 @@ mod view;
 /// Compute the bounding rectangle of the vertex array.
 ///
 /// This function returns the minimal axis-aligned rectangle that contains all the vertices of the array.
+///
+/// ```
+/// # use sfml::graphics::{FloatRect, Vertex, vertex_array_bounds};
+/// # use sfml::system::Vector2f;
+/// let vertices = [
+///     Vertex::with_pos(Vector2f::new(1., 2.)),
+///     Vertex::with_pos(Vector2f::new(-3., 5.)),
+///     Vertex::with_pos(Vector2f::new(4., 0.)),
+/// ];
+/// assert_eq!(
+///     vertex_array_bounds(&vertices),
+///     FloatRect::new(Vector2f::new(-3., 0.), Vector2f::new(7., 5.))
+/// );
+/// ```
 #[must_use]
 pub fn vertex_array_bounds(vertices: &[Vertex]) -> FloatRect {
     let mut vertices = vertices.iter();

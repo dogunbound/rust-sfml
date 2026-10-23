@@ -26,6 +26,13 @@ impl<'s> RectangleShape<'s> {
     /// # Panics
     ///
     /// Panics if a `RectangleShape` can't be created for some reason.
+    ///
+    /// ```
+    /// # use sfml::graphics::{RectangleShape, Shape};
+    /// # use sfml::system::Vector2f;
+    /// let shape = RectangleShape::new();
+    /// assert_eq!(shape.size(), Vector2f::new(0., 0.));
+    /// ```
     #[must_use]
     pub fn new() -> RectangleShape<'s> {
         let rectangle = unsafe { ffi::sfRectangleShape_new() };
@@ -44,6 +51,17 @@ impl<'s> RectangleShape<'s> {
     }
 
     /// Returns a new `RectangleShape` with the provided size.
+    ///
+    /// ```
+    /// # use sfml::graphics::{RectangleShape, Shape};
+    /// # use sfml::system::Vector2f;
+    /// let shape = RectangleShape::with_size(Vector2f::new(30., 40.));
+    /// assert_eq!(shape.size(), Vector2f::new(30., 40.));
+    /// assert_eq!(
+    ///     shape.local_bounds(),
+    ///     sfml::graphics::FloatRect::new(Vector2f::new(0., 0.), Vector2f::new(30., 40.))
+    /// );
+    /// ```
     #[must_use]
     pub fn with_size(size: Vector2f) -> RectangleShape<'s> {
         let mut shape = Self::new();
@@ -52,6 +70,15 @@ impl<'s> RectangleShape<'s> {
     }
 
     /// Returns a new `RectangleShape` created from a [`FloatRect`].
+    ///
+    /// ```
+    /// # use sfml::graphics::{FloatRect, RectangleShape, Shape, Transformable};
+    /// # use sfml::system::Vector2f;
+    /// let rect = FloatRect::new(Vector2f::new(5., 10.), Vector2f::new(30., 40.));
+    /// let shape = RectangleShape::from_rect(rect);
+    /// assert_eq!(shape.size(), rect.size);
+    /// assert_eq!(shape.position(), rect.position);
+    /// ```
     #[must_use]
     pub fn from_rect(rect: FloatRect) -> Self {
         let mut shape = Self::new();
@@ -72,6 +99,14 @@ impl<'s> RectangleShape<'s> {
     ///
     /// # Arguments
     /// * size - The new size of the rectangle
+    ///
+    /// ```
+    /// # use sfml::graphics::RectangleShape;
+    /// # use sfml::system::Vector2f;
+    /// let mut shape = RectangleShape::new();
+    /// shape.set_size(Vector2f::new(15., 25.));
+    /// assert_eq!(shape.size(), Vector2f::new(15., 25.));
+    /// ```
     pub fn set_size<S: Into<Vector2f>>(&mut self, size: S) {
         unsafe { ffi::sfRectangleShape_setSize(self.handle.as_ptr(), size.into()) }
     }

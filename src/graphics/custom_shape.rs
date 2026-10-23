@@ -59,6 +59,31 @@ impl<'s> CustomShape<'s> {
     /// # Panics
     ///
     /// Panics if for some reason a `CustomShape` can't be created.
+    ///
+    /// ```
+    /// # use sfml::graphics::{CustomShape, CustomShapePoints, Shape};
+    /// # use sfml::system::Vector2f;
+    /// struct Triangle;
+    ///
+    /// impl CustomShapePoints for Triangle {
+    ///     fn point_count(&self) -> usize {
+    ///         3
+    ///     }
+    ///
+    ///     fn point(&self, point: usize) -> Vector2f {
+    ///         match point {
+    ///             0 => Vector2f::new(0., 0.),
+    ///             1 => Vector2f::new(10., 0.),
+    ///             _ => Vector2f::new(0., 10.),
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// let mut shape = CustomShape::new(Box::new(Triangle));
+    /// shape.update();
+    /// assert_eq!(shape.point_count(), 3);
+    /// assert_eq!(shape.point(2), Vector2f::new(0., 10.));
+    /// ```
     #[must_use]
     pub fn new(points: Box<dyn CustomShapePoints + Send>) -> CustomShape<'s> {
         // SAFETY: Box::into_raw produces non-null pointer

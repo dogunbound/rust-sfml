@@ -40,6 +40,19 @@ impl Vertex {
     /// * `tex_coords` - Texture coordinate of the vertex
     ///
     /// Return a Vertex
+    ///
+    /// ```
+    /// # use sfml::graphics::{Color, Vertex};
+    /// # use sfml::system::Vector2f;
+    /// let vertex = Vertex::new(
+    ///     Vector2f::new(1., 2.),
+    ///     Color::RED,
+    ///     Vector2f::new(0.5, 0.5),
+    /// );
+    /// assert_eq!(vertex.position, Vector2f::new(1., 2.));
+    /// assert_eq!(vertex.color, Color::RED);
+    /// assert_eq!(vertex.tex_coords, Vector2f::new(0.5, 0.5));
+    /// ```
     #[must_use]
     pub const fn new(position: Vector2f, color: Color, tex_coords: Vector2f) -> Self {
         Self {
@@ -59,6 +72,13 @@ impl Vertex {
     /// * `tex_coords` - (0., 0.)
     ///
     /// Return a Vertex
+    ///
+    /// ```
+    /// # use sfml::graphics::Vertex;
+    /// # use sfml::system::Vector2f;
+    /// let vertex = Vertex::with_pos(Vector2f::new(3., 4.));
+    /// assert_eq!(vertex.position, Vector2f::new(3., 4.));
+    /// ```
     #[must_use]
     pub const fn with_pos(position: Vector2f) -> Self {
         Self::new(position, Self::DEFAULT.color, Self::DEFAULT.tex_coords)
@@ -74,6 +94,14 @@ impl Vertex {
     /// * `tex_coords` - (0., 0)
     ///
     /// Return a Vertex
+    ///
+    /// ```
+    /// # use sfml::graphics::{Color, Vertex};
+    /// # use sfml::system::Vector2f;
+    /// let vertex = Vertex::with_pos_color(Vector2f::new(1., 1.), Color::BLUE);
+    /// assert_eq!(vertex.color, Color::BLUE);
+    /// assert_eq!(vertex.tex_coords, Vector2f::new(0., 0.));
+    /// ```
     #[must_use]
     pub const fn with_pos_color(position: Vector2f, color: Color) -> Vertex {
         Self::new(position, color, Self::DEFAULT.tex_coords)
@@ -89,6 +117,14 @@ impl Vertex {
     /// * color - white
     ///
     /// Return a Vertex
+    ///
+    /// ```
+    /// # use sfml::graphics::{Color, Vertex};
+    /// # use sfml::system::Vector2f;
+    /// let vertex = Vertex::with_pos_coords(Vector2f::new(1., 1.), Vector2f::new(0.25, 0.75));
+    /// assert_eq!(vertex.color, Color::WHITE);
+    /// assert_eq!(vertex.tex_coords, Vector2f::new(0.25, 0.75));
+    /// ```
     #[must_use]
     pub const fn with_pos_coords(position: Vector2f, tex_coords: Vector2f) -> Vertex {
         Self::new(position, Self::DEFAULT.color, tex_coords)
