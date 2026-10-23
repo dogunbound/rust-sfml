@@ -5,11 +5,7 @@
 //! to the state of the playback device.
 
 use {
-    crate::{
-        IntoSfResult as _, SfResult,
-        cpp::{CppString, CppVector, FBox},
-        ffi::audio as ffi,
-    },
+    crate::{IntoSfResult as _, SfResult, cpp::FBox, ffi::audio as ffi},
     std::{
         ffi::{CString, c_int, c_void},
         ptr,
@@ -72,11 +68,12 @@ unsafe extern "C" fn notification_trampoline(notification: c_int, user_data: *mu
 ///
 /// Panics on allocation failure.
 #[must_use]
-pub fn available_devices() -> FBox<CppVector<CppString>> {
-    unsafe {
-        FBox::new(ffi::sfPlaybackDevice_getAvailableDevices())
-            .expect("Failed to create sfStdStringVector")
-    }
+pub fn available_devices() -> Vec<String> {
+    unsafe { FBox::new(ffi::sfPlaybackDevice_getAvailableDevices()) }
+        .expect("Failed to create sfStdStringVector")
+        .iter()
+        .map(|device| device.to_rust_string_lossy())
+        .collect()
 }
 
 /// Get the name of the default audio playback device
@@ -84,16 +81,18 @@ pub fn available_devices() -> FBox<CppVector<CppString>> {
 /// Returns `None` if there is no default device.
 /// The default device can change when a device is plugged in or unplugged.
 #[must_use]
-pub fn default_device() -> Option<FBox<CppString>> {
+pub fn default_device() -> Option<String> {
     unsafe { FBox::new(ffi::sfPlaybackDevice_getDefaultDevice()) }
+        .map(|device| device.to_rust_string_lossy())
 }
 
 /// Get the name of the current audio playback device
 ///
 /// Returns `None` if there is no current device.
 #[must_use]
-pub fn device() -> Option<FBox<CppString>> {
+pub fn device() -> Option<String> {
     unsafe { FBox::new(ffi::sfPlaybackDevice_getDevice()) }
+        .map(|device| device.to_rust_string_lossy())
 }
 
 /// Set the audio playback device
@@ -179,7 +178,7 @@ where
 #[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn test_default_device_is_available() {
     if let Some(default) = default_device() {
-        assert!(available_devices().iter().any(|device| device == &*default));
+        assert!(available_devices().iter().any(|device| device == &default));
     }
 }
 
@@ -190,8 +189,7 @@ fn test_available_device_names_are_unique() {
     for (i, device) in devices.iter().enumerate() {
         assert!(
             devices.iter().skip(i + 1).all(|other| other != device),
-            "duplicate device name: {}",
-            *device
+            "duplicate device name: {device}"
         );
     }
 }

@@ -1,7 +1,6 @@
 use {
     sfml::{
         audio::{Sound, SoundBuffer, SoundRecorder, SoundRecorderDriver, capture},
-        cpp::CppString,
         graphics::{Color, Font, RectangleShape, RenderTarget, RenderWindow, Text, Transformable},
         window::{Event, Key, Style},
     },
@@ -57,10 +56,10 @@ impl<'font> TextWriter<'font> {
 
 fn start_recording(
     driver: &mut SoundRecorderDriver<'_, MyRecorder>,
-    device: &CppString,
+    device: &str,
     sample_rate: u32,
 ) -> Result<(), Box<dyn Error>> {
-    driver.set_device(device.to_str()?)?;
+    driver.set_device(device)?;
     driver.start(sample_rate)?;
     Ok(())
 }
@@ -299,7 +298,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
             Mode::SetDevice => {
                 for (i, dev) in devices.iter().enumerate() {
-                    let default_str = if dev == &*default_device {
+                    let default_str = if dev == &default_device {
                         " (default)"
                     } else {
                         ""
@@ -310,7 +309,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         Color::WHITE
                     };
                     writer.text.set_fill_color(color);
-                    w!("{}: {}{default_str}", i + 1, dev.to_str()?);
+                    w!("{}: {}{default_str}", i + 1, dev);
                 }
             }
             Mode::SetSampleRate => {

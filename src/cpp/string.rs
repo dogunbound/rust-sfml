@@ -10,6 +10,11 @@ impl CppString {
     pub fn to_str(&self) -> Result<&str, std::str::Utf8Error> {
         std::str::from_utf8(self.data())
     }
+
+    /// Convert to a Rust `String`, replacing invalid UTF-8 sequences.
+    pub(crate) fn to_rust_string_lossy(&self) -> String {
+        String::from_utf8_lossy(self.data()).into_owned()
+    }
 }
 
 impl PartialEq for CppString {

@@ -48,7 +48,7 @@ fn print_playback_devices() {
     let devices = playback_device::available_devices();
     println!("{} playback devices available:", devices.len());
     for (i, device) in devices.iter().enumerate() {
-        let def_str = if default.as_deref() == Some(device) {
+        let def_str = if default.as_ref() == Some(device) {
             " (default)"
         } else {
             ""
@@ -61,7 +61,7 @@ fn print_playback_devices() {
 // Display the current playback device and its sample rate
 fn print_current_device() {
     match playback_device::device() {
-        Some(device) => println!("Current device: {}", *device),
+        Some(device) => println!("Current device: {device}"),
         None => println!("Current device: none"),
     }
     println!(
