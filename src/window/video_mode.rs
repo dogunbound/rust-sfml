@@ -35,6 +35,15 @@ pub struct VideoMode {
 
 impl VideoMode {
     /// Constructs a new `VideoMode` from the given parameters.
+    ///
+    /// ```
+    /// use sfml::system::Vector2u;
+    /// use sfml::window::VideoMode;
+    ///
+    /// let mode = VideoMode::new(Vector2u::new(1920, 1080), 32);
+    /// assert_eq!(mode.size, Vector2u::new(1920, 1080));
+    /// assert_eq!(mode.bits_per_pixel, 32);
+    /// ```
     #[must_use]
     pub const fn new(size: Vector2u, bits_per_pixel: u32) -> Self {
         Self {

@@ -42,6 +42,18 @@ use crate::{
 /// outer angle of the cone. The gain declines linearly
 /// from 1 to `outerGain` as the sound moves from the inner
 /// angle to the outer angle.
+///
+/// # Examples
+///
+/// ```
+/// use sfml::audio::listener::Cone;
+/// use sfml::system::Angle;
+///
+/// let cone = Cone::default();
+/// assert_eq!(cone.outer_gain, 1.);
+/// assert_eq!(cone.inner_angle, Angle::degrees(2. * std::f32::consts::PI));
+/// assert_eq!(cone.outer_angle, Angle::degrees(2. * std::f32::consts::PI));
+/// ```
 #[repr(C)]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Cone {

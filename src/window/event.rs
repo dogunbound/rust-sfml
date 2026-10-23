@@ -14,6 +14,18 @@ use crate::ffi::window::{self as ffi, EventType};
 /// [`Window::poll_event`]: crate::window::Window::poll_event
 /// [`Window::wait_event`]: crate::window::Window::wait_event
 ///
+/// # Examples
+///
+/// ```
+/// use sfml::window::Event;
+///
+/// let event = Event::TextEntered { unicode: 'a' };
+/// match event {
+///     Event::TextEntered { unicode } => assert_eq!(unicode, 'a'),
+///     _ => unreachable!(),
+/// }
+/// assert_eq!(Event::Closed, Event::Closed);
+/// ```
 #[derive(Clone, PartialEq, Debug, Copy)]
 pub enum Event {
     /// The window requested to be closed
