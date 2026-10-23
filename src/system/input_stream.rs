@@ -72,6 +72,16 @@ pub struct InputStream<'src, T> {
 impl<'src, T: Read + Seek> InputStream<'src, T> {
     /// Create a new input stream from a `Read + Seek` source.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::io::Cursor;
+    /// # use sfml::system::InputStream;
+    /// let mut cursor = Cursor::new(vec![1u8, 2, 3]);
+    /// let stream = InputStream::new(&mut cursor);
+    /// let _ = stream;
+    /// ```
+    ///
     /// # Panics
     ///
     /// Panics if a new `InputStream` can't be created for some reason.
@@ -94,6 +104,15 @@ impl<'src, T: Read + Seek> InputStream<'src, T> {
     }
 
     /// Create a new input stream from a `Read + Seek` source, with ownership.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::io::Cursor;
+    /// # use sfml::system::InputStream;
+    /// let stream = InputStream::new_owned(Cursor::new(vec![1u8, 2, 3]));
+    /// let _ = stream;
+    /// ```
     ///
     /// # Panics
     ///

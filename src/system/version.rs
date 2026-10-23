@@ -4,6 +4,17 @@ use crate::ffi::system as ffi;
 ///
 /// This is the version of the SFML library that is actually loaded at runtime,
 /// as opposed to the version the crate was built against.
+///
+/// # Examples
+///
+/// ```
+/// # use sfml::system::version;
+/// let version = version();
+/// assert!(version.major() >= 3);
+/// assert!(version.minor() >= 0);
+/// assert!(version.patch() >= 0);
+/// assert!(version.as_str().starts_with(&format!("{}.", version.major())));
+/// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Version {
     major: i8,
