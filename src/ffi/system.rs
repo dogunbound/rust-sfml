@@ -21,12 +21,4 @@ type sfInputStreamHelperGetSizeCb = Option<unsafe extern "C" fn(user_data: *mut 
 #[cfg_attr(not(feature = "graphics"), expect(dead_code))]
 pub type sfBuffer = crate::system::buffer::Buffer;
 
-#[allow(
-    dead_code,
-    reason = "the generated bindings declare functions that not every feature set uses"
-)]
-mod bindgen {
-    use super::*;
-    include!("system_bindgen.rs");
-}
-pub(crate) use bindgen::*;
+include!("system_bindgen.rs");
