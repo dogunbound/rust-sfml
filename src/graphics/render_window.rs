@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use crate::{
-    IntoSfResult, SfError, SfResult,
+    SfError, SfResult,
     cpp::FBox,
     ffi::graphics as ffi,
     graphics::{
@@ -293,8 +293,10 @@ impl RenderWindow {
     ///
     /// # Arguments
     /// * active - true to activate, false to deactivate
-    pub fn set_active(&mut self, enabled: bool) -> SfResult<()> {
-        unsafe { ffi::sfRenderWindow_setActive(self, enabled) }.into_sf_result()
+    ///
+    /// Return true if the operation was successful, false otherwise
+    pub fn set_active(&mut self, enabled: bool) -> bool {
+        unsafe { ffi::sfRenderWindow_setActive(self, enabled) }
     }
 }
 
