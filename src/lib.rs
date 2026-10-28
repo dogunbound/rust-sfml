@@ -59,7 +59,7 @@ use std::{error::Error, fmt::Display};
 /// ```
 #[derive(Clone, Copy, Debug)]
 pub enum SfError {
-    /// An string argument passed had interior nul bytes
+    /// A string argument contained interior nul bytes
     NulInStr,
     /// Call to SFML function returned an error
     CallFailed,

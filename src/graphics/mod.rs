@@ -119,7 +119,7 @@ pub fn vertex_array_bounds(vertices: &[Vertex]) -> FloatRect {
                 right = pos.x;
             }
 
-            // Update top and botttom
+            // Update top and bottom
             if pos.y < top {
                 top = pos.y;
             } else if pos.y > bottom {

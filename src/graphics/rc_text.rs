@@ -23,7 +23,7 @@ use {
 /// `RcText` is a drawable type that allows to easily
 /// display some text with custom style and color on a render target.
 ///
-/// This is an alternative to [`Text`], allowing for complete seperation from the font's lifetime.
+/// This is an alternative to [`Text`], allowing for complete separation from the font's lifetime.
 ///
 /// Underneath, it uses reference counting to ensure that the [`RcFont`] is alive.
 /// An `RcText` remains fully usable except for glyph-geometry queries and

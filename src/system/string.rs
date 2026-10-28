@@ -106,7 +106,7 @@ impl SfStrConvError {
         Self(value)
     }
 
-    /// Returns the index in the string where the conversion error occured
+    /// Returns the index in the string where the conversion error occurred
     #[must_use]
     pub fn index(&self) -> usize {
         self.0.index()
