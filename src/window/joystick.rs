@@ -51,7 +51,7 @@
 //! [`update`]: update
 //!
 
-use crate::{cpp::FBox, ffi::window as ffi, system::SfString};
+use crate::{cpp::FBox, ffi::window as ffi, system::SfStr};
 pub use ffi::JoystickAxis as Axis;
 
 /// Maximum number of supported joysticks.
@@ -158,8 +158,11 @@ pub fn identification(joystick: u32) -> FBox<Identification> {
 impl Identification {
     /// Name of the joystick.
     #[must_use]
-    pub fn name(&self) -> &SfString {
-        unsafe { &*ffi::sfJoystickIdentification_getName(self) }
+    pub fn name(&self) -> String {
+        unsafe {
+            let name = ffi::sfJoystickIdentification_getName(self);
+            SfStr::from_ptr_str(crate::ffi::system::sfString_getData(name)).to_rust_string()
+        }
     }
     /// Manufacturer identifier.
     #[must_use]

@@ -1,5 +1,5 @@
 pub use crate::ffi::window::Key;
-use crate::{ffi::window as ffi, system::SfStr, window::thread_safety};
+use crate::{cpp::FBox, ffi::window as ffi, system::SfStr, window::thread_safety};
 
 use super::Scancode;
 
@@ -59,11 +59,9 @@ impl Scancode {
     #[must_use]
     pub fn description(self) -> String {
         unsafe {
-            let sf_string = ffi::sfKeyboard_getDescription(self);
-            let data = ffi::system::sfString_getData(sf_string);
-            let string = SfStr::from_ptr_str(data).to_rust_string();
-            ffi::system::sfString_delete(sf_string);
-            string
+            let sf_string = FBox::new(ffi::sfKeyboard_getDescription(self))
+                .expect("Failed to get key description");
+            SfStr::from_ptr_str(ffi::system::sfString_getData(&*sf_string)).to_rust_string()
         }
     }
 }

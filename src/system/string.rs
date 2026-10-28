@@ -1,5 +1,4 @@
 use {
-    crate::ffi::system as ffi,
     core::fmt,
     std::error::Error,
     widestring::{U32CStr, U32CString, error::Utf32Error},
@@ -128,28 +127,5 @@ impl Error for SfStrConvError {}
 impl fmt::Display for SfStrConvError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self.0)
-    }
-}
-
-decl_opaque! {
-    /// Opaque handle to a C++ `sf::String`
-    pub SfString;
-}
-
-impl SfString {
-    fn data(&self) -> &[u32] {
-        unsafe {
-            let len = ffi::sfString_getLength(self);
-            let data = ffi::sfString_getData(self);
-            std::slice::from_raw_parts(data, len)
-        }
-    }
-}
-
-impl fmt::Display for SfString {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let data = self.data();
-        let ustr = widestring::U32Str::from_slice(data);
-        write!(f, "{}", ustr.to_string_lossy())
     }
 }

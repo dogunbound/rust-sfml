@@ -12,7 +12,7 @@ Windows, events, and input devices. Gated by the `window` feature.
 - `context_settings.rs`: `ContextSettings`, OpenGL version, depth, stencil, and antialiasing options.
 - `video_mode.rs`: `VideoMode`, a display resolution and bit depth, with desktop and fullscreen-mode queries.
 - `cursor.rs`: `Cursor` and `CursorType`, system or image-based mouse cursors.
-- `clipboard.rs`: `Clipboard`, reading and writing the system clipboard.
+- `clipboard.rs`: free functions for reading and writing the system clipboard.
 - `keyboard.rs`: `Key` and `Scancode` helpers, plus the virtual keyboard toggle.
 - `mouse.rs`: real-time mouse state queries (position, button state).
 - `joystick.rs`: real-time joystick state queries (connection, buttons, axes, identification).
