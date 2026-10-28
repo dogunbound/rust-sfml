@@ -121,7 +121,7 @@ impl Transformable for CircleShape<'_> {
     fn rotation(&self) -> Angle {
         unsafe { Angle::degrees(ffi::sfCircleShape_getRotation(self.handle.as_ptr())) }
     }
-    fn get_scale(&self) -> Vector2f {
+    fn scale(&self) -> Vector2f {
         unsafe { ffi::sfCircleShape_getScale(self.handle.as_ptr()) }
     }
     fn origin(&self) -> Vector2f {
@@ -133,7 +133,7 @@ impl Transformable for CircleShape<'_> {
     fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfCircleShape_rotate(self.handle.as_ptr(), angle.as_degrees()) }
     }
-    fn scale<F: Into<Vector2f>>(&mut self, factors: F) {
+    fn scale_by<F: Into<Vector2f>>(&mut self, factors: F) {
         unsafe { ffi::sfCircleShape_scale(self.handle.as_ptr(), factors.into()) }
     }
     fn transform(&self) -> &Transform {

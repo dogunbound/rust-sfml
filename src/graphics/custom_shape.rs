@@ -219,7 +219,7 @@ impl Transformable for CustomShape<'_> {
     fn rotation(&self) -> Angle {
         unsafe { Angle::degrees(ffi::sfCustomShape_getRotation(self.handle.as_ptr())) }
     }
-    fn get_scale(&self) -> Vector2f {
+    fn scale(&self) -> Vector2f {
         unsafe { ffi::sfCustomShape_getScale(self.handle.as_ptr()) }
     }
     fn origin(&self) -> Vector2f {
@@ -231,7 +231,7 @@ impl Transformable for CustomShape<'_> {
     fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfCustomShape_rotate(self.handle.as_ptr(), angle.as_degrees()) }
     }
-    fn scale<F: Into<Vector2f>>(&mut self, factors: F) {
+    fn scale_by<F: Into<Vector2f>>(&mut self, factors: F) {
         unsafe { ffi::sfCustomShape_scale(self.handle.as_ptr(), factors.into()) }
     }
     fn transform(&self) -> &Transform {

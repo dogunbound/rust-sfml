@@ -504,7 +504,7 @@ impl Transformable for Text<'_> {
     fn rotation(&self) -> Angle {
         Angle::degrees(unsafe { ffi::sfText_getRotation(self.handle.as_ptr()) })
     }
-    fn get_scale(&self) -> Vector2f {
+    fn scale(&self) -> Vector2f {
         unsafe { ffi::sfText_getScale(self.handle.as_ptr()) }
     }
     fn origin(&self) -> Vector2f {
@@ -516,7 +516,7 @@ impl Transformable for Text<'_> {
     fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfText_rotate(self.handle.as_ptr(), angle.as_degrees()) }
     }
-    fn scale<F: Into<Vector2f>>(&mut self, factors: F) {
+    fn scale_by<F: Into<Vector2f>>(&mut self, factors: F) {
         unsafe { ffi::sfText_scale(self.handle.as_ptr(), factors.into()) }
     }
     fn transform(&self) -> &Transform {

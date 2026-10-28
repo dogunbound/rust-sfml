@@ -311,10 +311,10 @@ impl Transformable for RcSprite {
         }
         Angle::degrees(unsafe { ffi::sfSprite_getRotation(self.handle.as_ptr()) })
     }
-    /// Reference [`Transformable::get_scale`] for additional information
+    /// Reference [`Transformable::scale`] for additional information
     ///
     /// Function fails, returns default, and prints an error message if `RcSprite`'s texture is dead.
-    fn get_scale(&self) -> Vector2f {
+    fn scale(&self) -> Vector2f {
         if !self.texture_exists() {
             eprintln!("{RETURN_ERROR_MSG}");
             return Default::default();
@@ -351,10 +351,10 @@ impl Transformable for RcSprite {
         }
         unsafe { ffi::sfSprite_rotate(self.handle.as_ptr(), angle.as_degrees()) }
     }
-    /// Reference [`Transformable::scale`] for additional information
+    /// Reference [`Transformable::scale_by`] for additional information
     ///
     /// Function fails, and prints an error message if `RcSprite`'s texture is dead.
-    fn scale<F: Into<Vector2f>>(&mut self, factors: F) {
+    fn scale_by<F: Into<Vector2f>>(&mut self, factors: F) {
         if !self.texture_exists() {
             eprintln!("{ERROR_MSG}");
             return;
