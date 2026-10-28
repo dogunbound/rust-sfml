@@ -225,10 +225,7 @@ impl ToOwned for VertexBuffer {
 
     fn to_owned(&self) -> Self::Owned {
         let ptr = unsafe { ffi::sfVertexBuffer_cpy(self) };
-        match FBox::new(ptr) {
-            Some(new) => new,
-            None => panic!("Failed to clone VertexBuffer"),
-        }
+        FBox::new(ptr).expect("Failed to clone VertexBuffer")
     }
 }
 
