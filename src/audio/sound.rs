@@ -66,9 +66,7 @@ impl<'buf> Sound<'buf> {
     /// Create a new `Sound` with a buffer
     #[must_use]
     pub fn with_buffer(buffer: &'buf SoundBuffer) -> Self {
-        let mut s = Sound::new(buffer);
-        s.set_buffer(buffer);
-        s
+        Sound::new(buffer)
     }
 }
 
