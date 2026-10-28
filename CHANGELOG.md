@@ -19,6 +19,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- `SoundBuffer::samples` now returns `&[i16]` and reports an empty buffer as an empty slice instead of building one from a null pointer
 - Link HarfBuzz (required by SFML 3.x for text shaping) for Linux and macOS
 - `TextStyle` now implements `Clone` and `Copy`
 - `Image` loads and saves QOI files, and loads PNM files, as SFML 3.1 supports them
