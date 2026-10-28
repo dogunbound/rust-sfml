@@ -3,6 +3,7 @@
 ## New
 
 ### Added
+- Add `RcText::set_outline_color`, matching `Text::set_outline_color`
 - Add `Text::shaped_glyphs` and `RcText::shaped_glyphs` to access the glyphs of a text after shaping, along with `graphics::ShapedGlyph` and `graphics::TextDirection`
 - Add `Text::{line_alignment, set_line_alignment}`, `Text::{text_orientation, set_text_orientation}` and `Text::{cluster_grouping, set_cluster_grouping}`, along with the matching `RcText` methods and `graphics::{LineAlignment, TextOrientation, ClusterGrouping}`
 - Add `Text::set_glyph_pre_processor` (`None` removes the pre-processor) to change the style and colors of each glyph when the text geometry is generated, along with the matching `RcText` methods and `graphics::GlyphAppearance`
