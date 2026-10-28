@@ -19,33 +19,41 @@ unsafe extern "C" fn read<T: Read + Seek>(
     let stream: &mut T = unsafe { &mut *(user_data.cast::<T>()) };
     if size == 0 {
         return 0;
-    } else if size > 0 {
-        #[expect(clippy::unwrap_used)]
-        let mut chunk = stream.take(size.try_into().unwrap());
-        let mut buf = vec![];
-        let result = chunk.read_to_end(&mut buf);
-        #[expect(clippy::unwrap_used)]
-        if let Ok(bytes_read) = result {
-            unsafe { ptr::copy_nonoverlapping(buf.as_ptr(), data.cast(), bytes_read) };
-            return bytes_read.try_into().unwrap();
-        }
     }
-    -1
+    let Ok(size) = usize::try_from(size) else {
+        return -1;
+    };
+    let mut chunk = stream.take(size as u64);
+    let mut buf = vec![];
+    match chunk.read_to_end(&mut buf) {
+        Ok(bytes_read) => {
+            unsafe { ptr::copy_nonoverlapping(buf.as_ptr(), data.cast(), bytes_read) };
+            c_longlong::try_from(bytes_read).unwrap_or(-1)
+        }
+        Err(_) => -1,
+    }
 }
 
-#[expect(clippy::unwrap_used)]
 unsafe extern "C" fn get_size<T: Read + Seek>(user_data: *mut c_void) -> c_longlong {
     let stream: &mut T = unsafe { &mut *(user_data.cast()) };
-    let pos = stream.stream_position().unwrap();
-    let size = stream.seek(SeekFrom::End(0)).unwrap();
-    let _ = stream.seek(SeekFrom::Start(pos));
-    size.try_into().unwrap()
+    let Ok(pos) = stream.stream_position() else {
+        return -1;
+    };
+    let Ok(size) = stream.seek(SeekFrom::End(0)) else {
+        return -1;
+    };
+    if stream.seek(SeekFrom::Start(pos)).is_err() {
+        return -1;
+    }
+    c_longlong::try_from(size).unwrap_or(-1)
 }
 
 unsafe extern "C" fn tell<T: Read + Seek>(user_data: *mut c_void) -> c_longlong {
     let stream: &mut T = unsafe { &mut *(user_data.cast()) };
-    #[expect(clippy::unwrap_used)]
-    stream.stream_position().unwrap().try_into().unwrap()
+    match stream.stream_position() {
+        Ok(position) => c_longlong::try_from(position).unwrap_or(-1),
+        Err(_) => -1,
+    }
 }
 
 unsafe extern "C" fn seek<T: Read + Seek>(
@@ -53,9 +61,11 @@ unsafe extern "C" fn seek<T: Read + Seek>(
     user_data: *mut c_void,
 ) -> c_longlong {
     let stream: &mut T = unsafe { &mut *(user_data.cast()) };
-    #[expect(clippy::unwrap_used)]
-    match stream.seek(SeekFrom::Start(position.try_into().unwrap())) {
-        Ok(n) => n.try_into().unwrap(),
+    let Ok(position) = u64::try_from(position) else {
+        return -1;
+    };
+    match stream.seek(SeekFrom::Start(position)) {
+        Ok(n) => c_longlong::try_from(n).unwrap_or(-1),
         Err(_) => -1,
     }
 }
@@ -142,6 +152,59 @@ impl Drop for sfInputStreamHelper {
     fn drop(&mut self) {
         unsafe {
             sfInputStreamHelper_del(self);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{get_size, read, seek, tell};
+    use std::{
+        io::{self, Read, Seek, SeekFrom},
+        os::raw::c_void,
+    };
+
+    /// A source whose `Read` side works but whose seek operations fail.
+    struct FailingSeek;
+
+    impl Read for FailingSeek {
+        fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
+            Ok(0)
+        }
+    }
+
+    impl Seek for FailingSeek {
+        fn seek(&mut self, _pos: SeekFrom) -> io::Result<u64> {
+            Err(io::Error::other("seek failed"))
+        }
+    }
+
+    #[test]
+    fn failing_seek_callbacks_return_minus_one() {
+        let mut stream = FailingSeek;
+        let user_data = (&mut stream as *mut FailingSeek).cast::<c_void>();
+
+        // SAFETY: `user_data` points to a live `FailingSeek`.
+        unsafe {
+            assert_eq!(get_size::<FailingSeek>(user_data), -1);
+            assert_eq!(tell::<FailingSeek>(user_data), -1);
+            assert_eq!(seek::<FailingSeek>(0, user_data), -1);
+        }
+    }
+
+    #[test]
+    fn read_with_negative_size_returns_minus_one() {
+        let mut stream = FailingSeek;
+        let user_data = (&mut stream as *mut FailingSeek).cast::<c_void>();
+        let mut buf = [0u8; 4];
+
+        // SAFETY: `user_data` points to a live `FailingSeek`, and `buf` is
+        // large enough because the negative size is rejected before writing.
+        unsafe {
+            assert_eq!(
+                read::<FailingSeek>(buf.as_mut_ptr().cast(), -1, user_data),
+                -1
+            );
         }
     }
 }
