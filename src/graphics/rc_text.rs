@@ -18,10 +18,6 @@ use {
     },
 };
 
-const ERROR_MSG: &str = "Text does not hold a font. Ignoring transformation!";
-const RETURN_ERROR_MSG: &str = "Text does not hold a font. Returning default value!";
-const PANIC_ERROR_MSG: &str = "Text does not hold a font! Return value cannot be discerned!";
-
 /// Graphical text (reference counted)
 ///
 /// `RcText` is a drawable type that allows to easily
@@ -29,15 +25,9 @@ const PANIC_ERROR_MSG: &str = "Text does not hold a font! Return value cannot be
 ///
 /// This is an alternative to [`Text`], allowing for complete seperation from the font's lifetime.
 ///
-/// Underneath, it uses reference counting to ensure that the [`RcFont`] is alive,
-/// and disallows performing certain actions on the text if the
-/// [`RcFont`] is no longer alive. It will print an error message in these cases.
-///
-/// The only functions that allow usage while the [`RcFont`] is not alive are
-/// `set_string`, `string`, `character_size`, `set_style`, `set_font`, `set_character_size`, `style`, `font`,
-/// `fill-color`, `outline_color`, `outline_thickness`, `line_spacing`, `set_line_spacing`, `letter_spacing`,
-/// `set_letter_spacing`, `line_alignment`, `set_line_alignment`, `text_orientation`, `set_text_orientation`,
-/// `cluster_grouping`, `set_cluster_grouping`, `set_glyph_pre_processor`
+/// Underneath, it uses reference counting to ensure that the [`RcFont`] is alive.
+/// An `RcText` remains fully usable except for glyph-geometry queries and
+/// drawing; those return empty or default values when the font is gone.
 ///
 /// [`Text`]: crate::graphics::Text
 #[derive(Debug)]
@@ -187,13 +177,7 @@ impl RcText {
     /// By default, the text's fill color is opaque white. Setting the fill color to a transparent
     /// color with an outline will cause the outline to be displayed in the fill area of the text.
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     pub fn set_fill_color(&mut self, color: Color) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_setFillColor(self.handle.as_ptr(), color) }
     }
 
@@ -204,13 +188,7 @@ impl RcText {
     /// Be aware that using a negative value for the outline thickness will cause distorted
     /// rendering.
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     pub fn set_outline_thickness(&mut self, thickness: f32) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_setOutlineThickness(self.handle.as_ptr(), thickness) }
     }
 
@@ -241,12 +219,9 @@ impl RcText {
     /// (and therefore invalidate the returned slice) from `&self` methods
     /// such as [`Drawable::draw`].
     ///
-    /// # Warning
-    /// Function fails, returns an empty slice, and prints an error message if [`RcFont`] is dead.
     #[must_use]
     pub fn shaped_glyphs(&mut self) -> &[ShapedGlyph] {
         if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
             return &[];
         }
         unsafe { &*ffi::sfText_getShapedGlyphs(self.handle.as_ptr()) }
@@ -338,12 +313,9 @@ impl RcText {
     /// SFML regenerates the vertices whenever the text changes, which discards any changes made
     /// to them. This takes `&mut self` for the same reason as [`RcText::shaped_glyphs`].
     ///
-    /// # Warning
-    /// Function fails, returns an empty slice, and prints an error message if [`RcFont`] is dead.
     #[must_use]
     pub fn vertex_data(&mut self) -> &mut [Vertex] {
         if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
             return &mut [];
         }
         let mut count = 0;
@@ -355,12 +327,9 @@ impl RcText {
     ///
     /// Same as [`RcText::vertex_data`], but for the outline.
     ///
-    /// # Warning
-    /// Function fails, returns an empty slice, and prints an error message if [`RcFont`] is dead.
     #[must_use]
     pub fn outline_vertex_data(&mut self) -> &mut [Vertex] {
         if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
             return &mut [];
         }
         let mut count = 0;
@@ -378,12 +347,9 @@ impl RcText {
     ///
     /// Return the local bounding rectangle of the entity
     ///
-    /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
     #[must_use]
     pub fn local_bounds(&self) -> FloatRect {
         if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
             return Default::default();
         }
         unsafe { ffi::sfText_getLocalBounds(self.handle.as_ptr()) }
@@ -399,12 +365,9 @@ impl RcText {
     ///
     /// Return the global bounding rectangle of the entity
     ///
-    /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
     #[must_use]
     pub fn global_bounds(&self) -> FloatRect {
         if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
             return Default::default();
         }
         unsafe { ffi::sfText_getGlobalBounds(self.handle.as_ptr()) }
@@ -474,137 +437,67 @@ impl Drawable for RcText {
 impl Transformable for RcText {
     /// Reference [`Transformable::set_position`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn set_position<P: Into<Vector2f>>(&mut self, position: P) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_setPosition(self.handle.as_ptr(), position.into()) }
     }
     /// Reference [`Transformable::set_rotation`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn set_rotation(&mut self, angle: Angle) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_setRotation(self.handle.as_ptr(), angle.as_degrees()) }
     }
     /// Reference [`Transformable::set_scale`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn set_scale<S: Into<Vector2f>>(&mut self, scale: S) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_setScale(self.handle.as_ptr(), scale.into()) }
     }
     /// Reference [`Transformable::set_origin`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn set_origin<O: Into<Vector2f>>(&mut self, origin: O) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_setOrigin(self.handle.as_ptr(), origin.into()) }
     }
     /// Reference [`Transformable::position`] for additional information
     ///
-    /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
     fn position(&self) -> Vector2f {
-        if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
-            return Default::default();
-        }
         unsafe { ffi::sfText_getPosition(self.handle.as_ptr()) }
     }
     /// Reference [`Transformable::rotation`] for additional information
     ///
-    /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
     fn rotation(&self) -> Angle {
-        if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
-            return Default::default();
-        }
         Angle::degrees(unsafe { ffi::sfText_getRotation(self.handle.as_ptr()) })
     }
     /// Reference [`Transformable::scale`] for additional information
     ///
-    /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
     fn scale(&self) -> Vector2f {
-        if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
-            return Default::default();
-        }
         unsafe { ffi::sfText_getScale(self.handle.as_ptr()) }
     }
     /// Reference [`Transformable::origin`] for additional information
     ///
-    /// # Warning
-    /// Function fails, returns default, and prints an error message if [`RcFont`] is dead.
     fn origin(&self) -> Vector2f {
-        if !self.font_exists() {
-            eprintln!("{RETURN_ERROR_MSG}");
-            return Default::default();
-        }
         unsafe { ffi::sfText_getOrigin(self.handle.as_ptr()) }
     }
     /// Reference [`Transformable::move_`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn move_<O: Into<Vector2f>>(&mut self, offset: O) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_move(self.handle.as_ptr(), offset.into()) }
     }
     /// Reference [`Transformable::rotate`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn rotate(&mut self, angle: Angle) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_rotate(self.handle.as_ptr(), angle.as_degrees()) }
     }
     /// Reference [`Transformable::scale_by`] for additional information
     ///
-    /// # Warning
-    /// Function fails, and prints an error message if `RcText`'s font is dead.
     fn scale_by<F: Into<Vector2f>>(&mut self, factors: F) {
-        if !self.font_exists() {
-            eprintln!("{ERROR_MSG}");
-            return;
-        }
         unsafe { ffi::sfText_scale(self.handle.as_ptr(), factors.into()) }
     }
     /// Reference [`Transformable::transform`] for additional information
     ///
-    /// Panics if font doesn't exist
     fn transform(&self) -> &Transform {
-        assert!(self.font_exists(), "{}", PANIC_ERROR_MSG);
         unsafe { &*ffi::sfText_getTransform(self.handle.as_ptr()) }
     }
     /// Reference [`Transformable::inverse_transform`] for additional information
     ///
-    /// Panics if font doesn't exist
     fn inverse_transform(&self) -> &Transform {
-        assert!(self.font_exists(), "{}", PANIC_ERROR_MSG);
         unsafe { &*ffi::sfText_getInverseTransform(self.handle.as_ptr()) }
     }
 }
