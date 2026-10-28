@@ -85,20 +85,11 @@ impl RcSprite {
     /// * `texture` - New texture
     /// * `reset_rect` - Should the texture rect be reset to the size
     ///   of the new texture?
-    ///
-    /// # Panics
-    ///
-    /// Panics on [`std::rc::Rc`] related shenanigans.
     pub fn set_texture(&mut self, texture: &RcTexture, reset_rect: bool) {
         self.set_rc_texture(texture);
-        #[expect(clippy::unwrap_used)]
-        let raw_texture = unsafe {
-            (*self.texture.upgrade().unwrap().as_ptr())
-                .0
-                .as_ptr()
-                .cast_const()
+        unsafe {
+            ffi::sfSprite_setTexture(self.handle.as_ptr(), texture.raw_texture(), reset_rect)
         };
-        unsafe { ffi::sfSprite_setTexture(self.handle.as_ptr(), raw_texture, reset_rect) };
     }
 
     /// Set the global color of a sprite
