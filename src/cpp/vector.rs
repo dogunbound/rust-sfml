@@ -69,7 +69,6 @@ impl<T: CppVectorItem> CppVector<T> {
     }
 
     /// Iterate over the elements of the vector
-    #[must_use]
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = &T> + ExactSizeIterator {
         (0..self.len()).map(move |index| unsafe { &*T::get_at(self, index) })
     }
