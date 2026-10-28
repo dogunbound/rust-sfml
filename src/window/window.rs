@@ -295,11 +295,9 @@ impl Window {
     /// # Arguments
     /// * title - New title
     pub fn set_title<S: SfStrConv>(&mut self, title: S) {
-        unsafe {
-            title.with_as_sfstr(|sfstr| {
-                ffi::sfWindow_setUnicodeTitle(self, sfstr.as_ptr());
-            });
-        }
+        title.with_as_sfstr(|sfstr| unsafe {
+            ffi::sfWindow_setUnicodeTitle(self, sfstr.as_ptr());
+        });
     }
 
     /// Show or hide a window
