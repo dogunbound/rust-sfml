@@ -83,3 +83,17 @@ impl From<Key> for Scancode {
 pub fn set_virtual_keyboard_visible(visible: bool) {
     unsafe { ffi::sfKeyboard_setVirtualKeyboardVisible(visible) }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{Key, Scancode};
+
+    #[cfg_attr(not(feature = "ci-headless"), test)]
+    #[cfg_attr(feature = "ci-headless", expect(dead_code))]
+    fn scancode_key_round_trip() {
+        let key: Key = Scancode::A.into();
+        let scancode: Scancode = key.into();
+
+        assert_eq!(scancode, Scancode::A);
+    }
+}
