@@ -151,7 +151,7 @@ pub fn up_vector() -> Vector3f {
     unsafe { ffi::audio::sfListener_getUpVector() }
 }
 
-/// Get the current forward vector of the listener in the scene
+/// Get the current velocity vector of the listener in the scene
 #[must_use]
 pub fn velocity() -> Vector3f {
     unsafe { ffi::audio::sfListener_getVelocity() }
@@ -159,7 +159,7 @@ pub fn velocity() -> Vector3f {
 
 /// Set the velocity of the listener in the scene
 ///
-/// The default listener's velocity is (0, 0, -1).
+/// The default listener's velocity is (0, 0, 0).
 pub fn set_velocity(velocity: Vector3f) {
     unsafe { ffi::audio::sfListener_setVelocity(velocity) }
 }
