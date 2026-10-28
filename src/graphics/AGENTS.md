@@ -18,7 +18,7 @@
 - `glyph_pre_processor.rs`: `GlyphAppearance` and the C trampoline that lets users adjust glyphs before text layout.
 - `image.rs`: `Image`, CPU-side pixel data with load, save, pixel access, and transform operations.
 - `primitive_type.rs`: `PrimitiveType`, the vertex topology (points, lines, triangles, and so on).
-- `rc_font.rs`: `RcFont`, a reference-counted twin of `Font`.
+- `rc_font.rs`: `RcFont`, a reference-counted twin of `Font`. `Text::font()` and `RcText::font()` return `Option<&Font>`.
 - `rc_sprite.rs`: `RcSprite`, a reference-counted twin of `Sprite`.
 - `rc_text.rs`: `RcText`, a reference-counted twin of `Text`.
 - `rc_texture.rs`: `RcTexture`, a reference-counted twin of `Texture`.
