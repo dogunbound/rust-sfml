@@ -96,16 +96,6 @@ pub trait Shape<'texture>: Drawable + Transformable {
 
     /// Returns an immutable iterator over all points
     fn points(&self) -> impl Iterator<Item = Vector2f> {
-        let point_count = self.point_count();
-        let mut i = 0;
-        std::iter::from_fn(move || {
-            if i == point_count {
-                None
-            } else {
-                let point = self.point(i);
-                i += 1;
-                Some(point)
-            }
-        })
+        (0..self.point_count()).map(|index| self.point(index))
     }
 }
