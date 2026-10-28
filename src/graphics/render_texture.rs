@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use crate::{
-    IntoSfResult, SfResult,
+    IntoSfResult, SfError, SfResult,
     cpp::FBox,
     ffi::graphics as ffi,
     graphics::{
@@ -38,7 +38,9 @@ impl RenderTexture {
     /// * settings - Additional settings for the underlying OpenGL texture and context
     pub fn with_settings(size: Vector2u, settings: &ContextSettings) -> SfResult<FBox<Self>> {
         let mut new = FBox::new(unsafe { ffi::sfRenderTexture_new() }).into_sf_result()?;
-        new.resize(size, settings)?;
+        if !new.resize(size, settings) {
+            return Err(SfError::CallFailed);
+        }
         Ok(new)
     }
 
@@ -55,8 +57,10 @@ impl RenderTexture {
     /// # Parameters
     /// * size - width and height of the render-texture
     /// * settings - Additional settings for the underlying OpenGL texture and context
-    pub fn resize(&mut self, size: Vector2u, settings: &ContextSettings) -> SfResult<()> {
-        unsafe { ffi::sfRenderTexture_resize(self, size, settings) }.into_sf_result()
+    ///
+    /// Return true if the resize was successful, false otherwise.
+    pub fn resize(&mut self, size: Vector2u, settings: &ContextSettings) -> bool {
+        unsafe { ffi::sfRenderTexture_resize(self, size, settings) }
     }
     /// Update the contents of the target texture
     pub fn display(&mut self) {

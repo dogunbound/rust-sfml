@@ -19,6 +19,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- `RenderTexture::resize` returns `bool`; the constructors still return `SfResult` and map a failed resize to `SfError::CallFailed`
 - `Context::set_active` and `RenderWindow::set_active` return `bool` instead of `SfResult<()>`, matching `Window::set_active` and `RenderTexture::set_active`
 - `View::new` no longer returns `SfResult`; it panics if the view cannot be allocated
 - `View::rotation` returns `Angle` instead of a raw `f32` number of degrees
