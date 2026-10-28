@@ -52,7 +52,7 @@ Summary of the `CSFML/` directory. It is a modified C++ shim over SFML 3.1 that 
 - `Color.hpp`: C color struct and converters to and from `sf::Color`.
 - `PrimitiveType.hpp`: C enum for primitive types (points, lines, triangles, ...).
 - `RenderWindow.cpp`: `sf::RenderWindow` wrapper.
-- `RenderStates.hpp`: C struct bundling blend mode, transform, texture, shader, and stencil state.
+- `RenderStates.hpp`: C struct bundling blend mode, transform, texture, shader, and stencil state. Its 9-float `sfTransform` field is legacy and unused.
 - `Texture.cpp`: `sf::Texture` wrapper.
 - `Transform.hpp`: C 3x3 transform struct and converters to and from `sf::Transform`.
 
