@@ -22,6 +22,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- `Window::new` now creates and opens the window, taking the arguments that `Window::new_open` had. `Window::new_open` and the closed-window constructor are removed
 - `RcFont` and `RcTexture` now implement `Clone` by cloning the reference counter, and their deep-copy `ToOwned` impls are removed
 - `RcText` and `RcSprite` only guard the operations that genuinely need their font or texture. Other methods no longer print errors or panic when the resource is gone; glyph geometry and drawing return empty/default values, and `transform`/`inverse_transform` no longer panic
 - Rename `Transformable::get_scale` to `scale` and the mutating `Transformable::scale` to `scale_by`. `set_scale` stays the absolute setter
@@ -77,7 +78,6 @@
 - Rename `Transform::get_matrix` to `Transform::matrix`
 - Make `Transform::{new, matrix, inverse}` `const fn`
 - `Image::new` now creates an empty image. See `Image::new_solid`
-- Old `Window::new` is now `Window::new_open`
 - `SoundRecorder` now requires `Send`
 - Make `RcFont::texture` return `Ref` rather than "leak" a borrow
 - Make all fields on `RenderStates` public

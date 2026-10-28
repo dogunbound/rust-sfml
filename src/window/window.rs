@@ -35,23 +35,19 @@ decl_opaque! {
 }
 
 impl Window {
-    /// Create a new (closed) window.
-    pub fn new() -> SfResult<FBox<Self>> {
-        FBox::new(unsafe { ffi::sfWindow_new() }).into_sf_result()
-    }
     /// Creates a new window and opens it with the specified parameters.
     ///
     /// See [`Self::open`].
-    pub fn new_open<V: Into<VideoMode>, S: SfStrConv>(
+    pub fn new<V: Into<VideoMode>, S: SfStrConv>(
         mode: V,
         title: S,
         style: Style,
         state: State,
         settings: &ContextSettings,
     ) -> SfResult<FBox<Self>> {
-        let mut new = Self::new()?;
-        new.open(mode, title, style, state, settings);
-        Ok(new)
+        let mut window = FBox::new(unsafe { ffi::sfWindow_new() }).into_sf_result()?;
+        window.open(mode, title, style, state, settings);
+        Ok(window)
     }
     /// Open the window with the specified parameters
     ///
@@ -61,16 +57,14 @@ impl Window {
     /// title bar, resizable, closable, ...). If style contains
     /// [`Style::FULLSCREEN`], then mode must be a valid video mode.
     ///
-    /// The fourth parameter is a pointer to a structure specifying
-    /// advanced OpenGL context settings such as antialiasing,
-    /// depth-buffer bits, etc.
-    ///
     /// # Arguments
     /// * mode - Video mode to use (defines the width, height and depth of the
     ///   rendering area of the window)
     /// * title - Title of the window
     /// * style - Window style
-    /// * settings - Additional settings for the underlying OpenGL context
+    /// * state - Window state (windowed or fullscreen)
+    /// * settings - Additional settings for the underlying OpenGL context,
+    ///   such as antialiasing and depth-buffer bits
     pub fn open<V: Into<VideoMode>, S: SfStrConv>(
         &mut self,
         mode: V,
@@ -184,7 +178,7 @@ impl Window {
     #[cfg_attr(not(feature = "ci-headless"), doc = "```")]
     /// use sfml::window::{Event, Style, Window};
     ///
-    /// let mut window = Window::new_open(
+    /// let mut window = Window::new(
     ///     (800, 600),
     ///     "handle_events",
     ///     Style::CLOSE,
@@ -209,7 +203,7 @@ impl Window {
     /// ```compile_fail,E0499
     /// use sfml::window::{Style, Window};
     ///
-    /// let mut window = Window::new_open(
+    /// let mut window = Window::new(
     ///     (800, 600),
     ///     "handle_events",
     ///     Style::CLOSE,
