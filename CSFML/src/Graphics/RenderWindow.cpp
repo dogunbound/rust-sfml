@@ -187,8 +187,7 @@ extern "C" sfIntRect sfRenderWindow_getViewport(const sf::RenderWindow *renderWi
 }
 
 extern "C" sfIntRect sfRenderWindow_getScissor(const sf::RenderWindow *renderWindow, const sf::View *view) {
-    sf::IntRect rect = renderWindow->getViewport(*view);
-    return {{rect.position.x, rect.position.y}, {rect.size.x, rect.size.y}};
+    return convertRect(renderWindow->getScissor(*view));
 }
 
 extern "C" sfVector2f sfRenderWindow_mapPixelToCoords(const sf::RenderWindow *renderWindow, sfVector2i point) {
