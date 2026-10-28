@@ -49,8 +49,11 @@ use {
 /// This means that a pixel must be composed of
 /// 8 bits red, green, blue and alpha channels – just like a [`Color`].
 ///
+/// Cloning an `RcTexture` clones the reference counter and shares the same
+/// texture.
+///
 /// [`Color`]: crate::graphics::Color
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RcTexture {
     texture: Rc<RefCell<FBox<Texture>>>,
 }
@@ -337,15 +340,5 @@ impl RcTexture {
     /// Allows other rc variants to request a weak pointer to the texture
     pub(super) fn downgrade(&self) -> std::rc::Weak<RefCell<FBox<Texture>>> {
         Rc::downgrade(&self.texture)
-    }
-}
-
-impl ToOwned for RcTexture {
-    type Owned = Self;
-
-    fn to_owned(&self) -> Self {
-        RcTexture {
-            texture: Rc::new(RefCell::new(self.texture.borrow().to_owned())),
-        }
     }
 }
