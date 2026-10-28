@@ -382,6 +382,7 @@ impl SoundBufferRecorder {
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]
+#[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn test_driver_channel_count_is_checked_by_sfml() {
     struct NullRecorder;
     impl SoundRecorder for NullRecorder {
@@ -406,6 +407,7 @@ fn test_driver_channel_count_is_checked_by_sfml() {
 }
 
 #[cfg_attr(not(feature = "ci-headless"), test)]
+#[cfg_attr(feature = "ci-headless", expect(dead_code))]
 fn test_buffer_recorder_channel_count_is_checked_by_sfml() {
     let mut recorder = SoundBufferRecorder::new();
     assert!(matches!(
