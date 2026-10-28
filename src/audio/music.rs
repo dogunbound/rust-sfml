@@ -31,6 +31,9 @@ use {
 ///
 /// [`play`]: Music::play
 /// [`SoundBuffer`]: crate::audio::SoundBuffer
+/// A `Music` is `Send` when its owned stream type is `Send`, and `Sync`
+/// when that type is `Sync`.
+///
 /// [`Sound`]: crate::audio::Sound
 #[derive(Debug)]
 pub struct Music<'src, S = Empty> {
@@ -39,11 +42,13 @@ pub struct Music<'src, S = Empty> {
 }
 
 // SAFETY: An `sfMusic` isn't tied to a particular thread, so it can be sent between threads safely.
-unsafe impl Send for Music<'_> {}
+// The owned stream type must be `Send` because the music can move it.
+unsafe impl<S: Send> Send for Music<'_, S> {}
 
 // SAFETY: An `&Music` only allows access to methods which read the status of the music, which is
 // fine to do from multiple threads at once. Thus it is safe to pass `&Music` between threads.
-unsafe impl Sync for Music<'_> {}
+// The owned stream type must be `Sync` because `&Music` gives access to it.
+unsafe impl<S: Sync> Sync for Music<'_, S> {}
 
 /// Creating and opening
 impl<'src, S> Music<'src, S> {
