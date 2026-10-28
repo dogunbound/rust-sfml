@@ -34,6 +34,7 @@ impl Image {
     /// # Panics
     ///
     /// Panics if the image allocation fails.
+    #[must_use]
     pub fn new() -> FBox<Self> {
         FBox::new(unsafe { ffi::sfImage_new() }).expect("Failed to create Image")
     }
@@ -50,6 +51,7 @@ impl Image {
     /// # Panics
     ///
     /// Panics if the image allocation fails.
+    #[must_use]
     pub fn new_solid(size: Vector2u, color: Color) -> FBox<Self> {
         let mut img = Self::new();
         img.resize_with_color(size, color);
@@ -72,6 +74,7 @@ impl Image {
     /// let image = Image::from_pixels(Vector2u::new(1, 1), &[255, 0, 0, 255]);
     /// assert_eq!(image.pixel_at(Vector2u::new(0, 0)), Some(Color::RED));
     /// ```
+    #[must_use]
     pub fn from_pixels(size: Vector2u, data: &[u8]) -> FBox<Self> {
         let mut img = Self::new();
         img.resize_with_pixels(size, data);

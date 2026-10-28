@@ -42,6 +42,7 @@ impl View {
     /// # Panics
     ///
     /// Panics if the view allocation fails.
+    #[must_use]
     pub fn new() -> FBox<Self> {
         FBox::new(unsafe { ffi::sfView_new() }).expect("Failed to create view")
     }
