@@ -33,9 +33,10 @@ Prerequisites
 - Rust 1.86 or later
 - [CMake](https://cmake.org/), and a C++ toolchain for building SFML
 - 🐧 On Linux, you need the following dependencies installed:
-   - Window module: `libGL libX11 libXcursor libXrandr`
+   - Window module: `libGL libX11 libXcursor libXrandr libudev libXi`
    - Graphics module: `libfreetype libharfbuzz`
-   - Audio module: `libvorbisenc libvorbisfile libvorbis`
+   - Audio module: `libvorbisenc libvorbisfile libvorbis`. Without the default
+     `build-flac-ogg` feature, `libFLAC` and `libogg` must also be installed.
 
 Documentation
 =============
