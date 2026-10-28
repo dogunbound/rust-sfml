@@ -1,6 +1,5 @@
 use {
     crate::{
-        IntoSfResult, SfResult,
         cpp::{FBox, RawDefault},
         ffi::graphics as ffi,
         graphics::FloatRect,
@@ -22,7 +21,7 @@ decl_opaque! {
 /// use sfml::graphics::View;
 /// use sfml::system::Vector2f;
 ///
-/// let view = View::new().expect("failed to create view");
+/// let view = View::new();
 /// assert_eq!(view.center(), Vector2f::new(500., 500.));
 /// assert_eq!(view.size(), Vector2f::new(1000., 1000.));
 /// ```
@@ -36,11 +35,15 @@ impl View {
     /// ```
     /// # use sfml::graphics::View;
     /// # use sfml::system::Vector2f;
-    /// let view = View::new().expect("failed to create view");
+    /// let view = View::new();
     /// assert_eq!(view.size(), Vector2f::new(1000., 1000.));
     /// ```
-    pub fn new() -> SfResult<FBox<Self>> {
-        FBox::new(unsafe { ffi::sfView_new() }).into_sf_result()
+    ///
+    /// # Panics
+    ///
+    /// Panics if the view allocation fails.
+    pub fn new() -> FBox<Self> {
+        FBox::new(unsafe { ffi::sfView_new() }).expect("Failed to create view")
     }
     /// Creates a view with position and size
     ///
@@ -98,7 +101,7 @@ impl View {
     /// ```
     /// # use sfml::graphics::View;
     /// # use sfml::system::Angle;
-    /// let mut view = View::new().expect("failed to create view");
+    /// let mut view = View::new();
     /// assert_eq!(view.rotation(), Angle::degrees(0.));
     /// view.rotate(Angle::degrees(45.));
     /// assert_eq!(view.rotation(), Angle::degrees(45.));
@@ -180,7 +183,7 @@ impl View {
     /// ```
     /// # use sfml::graphics::View;
     /// # use sfml::system::Angle;
-    /// let mut view = View::new().expect("failed to create view");
+    /// let mut view = View::new();
     /// view.rotate(Angle::degrees(30.));
     /// view.rotate(Angle::degrees(15.));
     /// assert_eq!(view.rotation(), 45.);
@@ -205,7 +208,7 @@ impl View {
     /// ```
     /// # use sfml::graphics::View;
     /// # use sfml::system::Vector2f;
-    /// let mut view = View::new().expect("failed to create view");
+    /// let mut view = View::new();
     /// view.zoom(2.);
     /// assert_eq!(view.size(), Vector2f::new(2000., 2000.));
     /// ```
@@ -263,7 +266,7 @@ impl View {
     /// ```
     /// # use sfml::graphics::{FloatRect, View};
     /// # use sfml::system::Vector2f;
-    /// let mut view = View::new().expect("failed to create view");
+    /// let mut view = View::new();
     /// let viewport = FloatRect::new(Vector2f::new(0., 0.), Vector2f::new(0.5, 1.));
     /// view.set_viewport(viewport);
     /// assert_eq!(view.viewport(), viewport);
@@ -295,7 +298,7 @@ impl View {
     /// ```
     /// # use sfml::graphics::{FloatRect, View};
     /// # use sfml::system::Vector2f;
-    /// let mut view = View::new().expect("failed to create view");
+    /// let mut view = View::new();
     /// let scissor = FloatRect::new(Vector2f::new(0.5, 0.), Vector2f::new(0.5, 1.));
     /// view.set_scissor(scissor);
     /// assert_eq!(view.scissor(), scissor);
