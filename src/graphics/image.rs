@@ -178,13 +178,13 @@ impl Image {
         if coords.x >= image_size.x {
             return Err(PixelAccessError::XTooLarge {
                 x: coords.x,
-                width: image_size.x - 1,
+                width: image_size.x.saturating_sub(1),
             });
         }
         if coords.y >= image_size.y {
             return Err(PixelAccessError::YTooLarge {
                 y: coords.y,
-                height: image_size.y - 1,
+                height: image_size.y.saturating_sub(1),
             });
         }
 
