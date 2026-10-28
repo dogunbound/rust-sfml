@@ -29,6 +29,18 @@ impl PartialEq<CppString> for str {
     }
 }
 
+impl PartialEq<str> for CppString {
+    fn eq(&self, other: &str) -> bool {
+        self.data() == other.as_bytes()
+    }
+}
+
+impl PartialEq<&str> for CppString {
+    fn eq(&self, other: &&str) -> bool {
+        self.data() == other.as_bytes()
+    }
+}
+
 impl CppString {
     fn data(&self) -> &[u8] {
         unsafe {

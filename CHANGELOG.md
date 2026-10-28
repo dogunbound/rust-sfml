@@ -3,6 +3,7 @@
 ## New
 
 ### Added
+- `CppString` can be compared with `str` and `&str` in either direction, matching the existing `impl PartialEq<CppString> for str`
 - Add `RcTexture::resize`, matching `Texture::resize`
 - Add `RcFont::has_glyph`, matching `Font::has_glyph`
 - Add `RcText::set_outline_color`, matching `Text::set_outline_color`
