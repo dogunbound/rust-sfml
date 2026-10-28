@@ -17,7 +17,7 @@ use {
 /// `RcSprite` is a drawable type that allows to easily
 /// display a [`RcTexture`] (or a part of it) on a render target.
 ///
-/// This is an alternative to [`Sprite`], allowing for complete seperation from the texture's lifetime.
+/// This is an alternative to [`Sprite`], allowing for complete separation from the texture's lifetime.
 ///
 /// Underneath, it uses reference counting to ensure that the `RcTexture` is alive.
 /// An `RcSprite` remains fully usable except for drawing and the texture

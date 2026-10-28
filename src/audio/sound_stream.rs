@@ -77,7 +77,7 @@ unsafe extern "C" fn get_data_callback<S: SoundStream>(
         {
             ret
         } else {
-            eprintln!("sound_stream: Stopping playback beacuse `get_data` panicked.");
+            eprintln!("sound_stream: Stopping playback because `get_data` panicked.");
             (&[][..], false)
         };
         (*chunk).samples = data.as_ptr();

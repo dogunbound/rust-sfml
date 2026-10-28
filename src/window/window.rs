@@ -226,7 +226,7 @@ impl Window {
     /// is dedicated to events handling: you want to make this thread
     /// sleep as long as no new event is received.
     ///
-    /// Returns `Some(event)` or `None` if an error has occured
+    /// Returns `Some(event)` or `None` if an error has occurred
     pub fn wait_event(&mut self, timeout: Time) -> Option<Event> {
         let mut event = std::mem::MaybeUninit::uninit();
         let have_event =
