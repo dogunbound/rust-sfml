@@ -370,15 +370,15 @@ pub trait SoundSource {
 
     ///Get the maximum distance of the sound
     #[must_use]
-    fn get_max_distance(&self) -> f32;
+    fn max_distance(&self) -> f32;
 
     ///Get the minimum gain of the sound
     #[must_use]
-    fn get_min_gain(&self) -> f32;
+    fn min_gain(&self) -> f32;
 
     ///Get the maximum gain of the sound
     #[must_use]
-    fn get_max_gain(&self) -> f32;
+    fn max_gain(&self) -> f32;
 
     /// Get the attenuation factor of the sound.
     #[must_use]

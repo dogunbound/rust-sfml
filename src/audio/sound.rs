@@ -275,13 +275,13 @@ impl SoundSource for Sound<'_> {
     fn directional_attenuation_factor(&self) -> f32 {
         unsafe { ffi::audio::sfSound_getDirectionalAttenuationFactor(self.handle.as_ptr()) }
     }
-    fn get_max_distance(&self) -> f32 {
+    fn max_distance(&self) -> f32 {
         unsafe { ffi::audio::sfSound_getMaxDistance(self.handle.as_ptr()) }
     }
-    fn get_min_gain(&self) -> f32 {
+    fn min_gain(&self) -> f32 {
         unsafe { ffi::audio::sfSound_getMinGain(self.handle.as_ptr()) }
     }
-    fn get_max_gain(&self) -> f32 {
+    fn max_gain(&self) -> f32 {
         unsafe { ffi::audio::sfSound_getMaxGain(self.handle.as_ptr()) }
     }
     fn status(&self) -> super::sound_source::Status {

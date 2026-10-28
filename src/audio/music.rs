@@ -413,13 +413,13 @@ impl<S> SoundSource for Music<'_, S> {
     fn directional_attenuation_factor(&self) -> f32 {
         unsafe { ffi::audio::sfMusic_getDirectionalAttenuationFactor(self.music) }
     }
-    fn get_max_distance(&self) -> f32 {
+    fn max_distance(&self) -> f32 {
         unsafe { ffi::audio::sfMusic_getMaxDistance(self.music) }
     }
-    fn get_min_gain(&self) -> f32 {
+    fn min_gain(&self) -> f32 {
         unsafe { ffi::audio::sfMusic_getMinGain(self.music) }
     }
-    fn get_max_gain(&self) -> f32 {
+    fn max_gain(&self) -> f32 {
         unsafe { ffi::audio::sfMusic_getMaxGain(self.music) }
     }
     fn status(&self) -> super::sound_source::Status {
