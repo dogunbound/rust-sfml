@@ -190,9 +190,7 @@ fn main() {
         .define("CMAKE_CXX_STANDARD_REQUIRED", "ON")
         // Disable "install" step
         .no_build_target(true);
-    if is_windows {
-        cmake.define("CMAKE_CXX_STANDARD", "17");
-        cmake.define("CMAKE_CXX_STANDARD_REQUIRED", "ON");
+    if matches!(win_env, Some(WinEnv::Msvc)) {
         cmake.define("CMAKE_CXX_FLAGS_INIT", "/EHsc");
     }
     if feat_audio {
@@ -341,7 +339,7 @@ fn main() {
         link_sfml_subsystem("audio");
     }
     link_sfml_subsystem("system");
-    if is_unix && is_linux {
+    if is_linux {
         static_link_linux(feat_window, feat_audio, feat_graphics, flac_ogg_linkage);
     } else if is_windows {
         match win_env {
