@@ -85,7 +85,7 @@ impl RcTexture {
     }
     /// Tell whether a texture is repeated or not
     ///
-    /// Return frue if repeat mode is enabled, false if it is disabled
+    /// Return true if repeat mode is enabled, false if it is disabled
     #[must_use]
     pub fn is_repeated(&self) -> bool {
         self.texture.borrow().is_repeated()

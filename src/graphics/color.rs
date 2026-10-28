@@ -1,6 +1,6 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
-/// Utility type for manpulating RGBA colors
+/// Utility type for manipulating RGBA colors
 ///
 /// `Color` is a simple color type composed of 4 components: Red, Green, Blue, Alpha
 ///
@@ -90,10 +90,10 @@ impl Color {
     /// Magenta predefined color
     pub const MAGENTA: Self = Self::rgb(255, 0, 255);
 
-    /// Cyan predifined color
+    /// Cyan predefined color
     pub const CYAN: Self = Self::rgb(0, 255, 255);
 
-    /// Tranparent predefined color
+    /// Transparent predefined color
     pub const TRANSPARENT: Self = Self::rgba(0, 0, 0, 0);
 }
 
