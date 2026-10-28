@@ -453,10 +453,7 @@ impl ToOwned for Image {
 
     fn to_owned(&self) -> Self::Owned {
         let ptr = unsafe { ffi::sfImage_cpy(self) };
-        match FBox::new(ptr) {
-            Some(new) => new,
-            None => panic!("Failed to copy image"),
-        }
+        FBox::new(ptr).expect("Failed to copy image")
     }
 }
 
