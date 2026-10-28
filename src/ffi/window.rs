@@ -1,6 +1,6 @@
 pub(crate) use crate::ffi::*;
 use crate::{
-    system::SfString as sfString,
+    ffi::system::sfString,
     window::{VideoMode as sfVideoMode, joystick::Identification as sfJoystickIdentification},
 };
 #[cfg(feature = "serde")]

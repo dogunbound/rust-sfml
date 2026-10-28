@@ -36,6 +36,7 @@
 - Fix the `opengl` example throwing a "call failed" error when pressing space to toggle sRGB. The window was closed but the render loop kept calling `set_active` on the now-closed window; it now stops the render loop and lets the outer loop recreate the window
 
 ### Removed
+- `system::SfString`, the raw handle to a C++ `sf::String`. String-returning APIs now copy into Rust `String` values and own the handle internally, including `joystick::Identification::name`
 - `Text::find_character_pos` and `RcText::find_character_pos`, deprecated by SFML 3.1 in favor of `shaped_glyphs`
 - `window::touch` (`is_down`, `desktop_position`), `Window::touch_position` and `RenderWindow::touch_position`, deprecated by SFML 3.1. Use the `position` of `Event::TouchBegan`, `Event::TouchMoved` and `Event::TouchEnded` instead, and track which fingers are down from those events. `desktop_position` has no replacement, since touch events report positions relative to the window.
 
