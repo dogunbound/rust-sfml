@@ -5,7 +5,7 @@ use sfml::{
 };
 
 fn main() -> SfResult<()> {
-    let mut window = Window::new_open(
+    let mut window = Window::new(
         (800, 600),
         "Handle events",
         Style::CLOSE,
