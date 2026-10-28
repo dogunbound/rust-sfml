@@ -51,9 +51,6 @@ impl Scancode {
     /// interpret the scancode: for example, sfKeySemicolon is
     /// mapped to ";" for layout and to "é" for others.
     ///
-    /// The returned const char* owns the string and must be freed to
-    /// avoid memory leaks.
-    ///
     /// # Arguments
     /// code - Scancode to describe
     ///
