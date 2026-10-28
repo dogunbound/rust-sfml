@@ -19,6 +19,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- `RcText` and `RcSprite` only guard the operations that genuinely need their font or texture. Other methods no longer print errors or panic when the resource is gone; glyph geometry and drawing return empty/default values, and `transform`/`inverse_transform` no longer panic
 - Rename `Transformable::get_scale` to `scale` and the mutating `Transformable::scale` to `scale_by`. `set_scale` stays the absolute setter
 - Rename `VertexBuffer::available` to `VertexBuffer::is_available`, matching `Shader::is_available`
 - `RenderTexture::resize` returns `bool`; the constructors still return `SfResult` and map a failed resize to `SfError::CallFailed`
