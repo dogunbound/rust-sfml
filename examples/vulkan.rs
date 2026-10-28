@@ -521,7 +521,7 @@ fn main() -> SfResult<()> {
     }
     println!("Created Vulkan instance {instance:?} with extensions {extensions:?}");
 
-    let mut window = Window::new_open(
+    let mut window = Window::new(
         (800, 600),
         "Vulkan window",
         Style::CLOSE,
