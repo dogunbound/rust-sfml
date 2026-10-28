@@ -261,7 +261,7 @@ impl RenderWindow {
         unsafe { &*ffi::sfRenderWindow_getSettings(self) }
     }
 
-    /// Tell if the render texture will use sRGB encoding when drawing it
+    /// Tell if the render window will use sRGB encoding when drawing to it
     ///
     /// Returns true if sRGB encoding is enabled, false if sRGB encoding is disabled
     #[must_use]
