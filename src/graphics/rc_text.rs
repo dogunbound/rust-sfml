@@ -181,6 +181,21 @@ impl RcText {
         unsafe { ffi::sfText_setFillColor(self.handle.as_ptr(), color) }
     }
 
+    /// Set the outline color of the text.
+    ///
+    /// By default, the text's outline color is opaque black.
+    ///
+    /// ```
+    /// # use sfml::graphics::{Color, RcFont, RcText};
+    /// # let font = RcFont::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// let mut text = RcText::new("Hello", &font, 30);
+    /// text.set_outline_color(Color::RED);
+    /// assert_eq!(text.outline_color(), Color::RED);
+    /// ```
+    pub fn set_outline_color(&mut self, color: Color) {
+        unsafe { ffi::sfText_setOutlineColor(self.handle.as_ptr(), color) }
+    }
+
     /// Set the thickness of the `RcText`'s outline.
     ///
     /// By default, the outline thickness is 0.
