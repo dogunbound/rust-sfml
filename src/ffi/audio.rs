@@ -53,6 +53,10 @@ pub(crate) unsafe extern "C" fn effect_processor_trampoline(
     frame_channel_count: c_uint,
     user_data: *mut c_void,
 ) {
+    if input_frames.is_null() {
+        return;
+    }
+
     unsafe {
         let closure = &mut *user_data.cast::<sound_source::EffectProcessor>();
 
