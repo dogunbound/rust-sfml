@@ -305,7 +305,7 @@ impl RenderWindow {
     /// Show or hide the mouse cursor
     ///
     /// # Arguments
-    /// * visible - true to  false to hide
+    /// * visible - true to show the cursor, false to hide it
     pub fn set_mouse_cursor_visible(&mut self, visible: bool) {
         unsafe {
             ffi::sfRenderWindow_setMouseCursorVisible(self, visible);
