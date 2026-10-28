@@ -56,6 +56,10 @@ impl Scancode {
     ///
     /// # Arguments
     /// code - Scancode to describe
+    ///
+    /// # Panics
+    ///
+    /// Panics if the description allocation fails.
     #[must_use]
     pub fn description(self) -> String {
         unsafe {

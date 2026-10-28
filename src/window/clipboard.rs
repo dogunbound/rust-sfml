@@ -16,6 +16,10 @@ use crate::{
 /// Get the content of the clipboard as string data.
 ///
 /// If the clipboard does not contain a string, it returns an empty string.
+///
+/// # Panics
+///
+/// Panics if the clipboard string allocation fails.
 #[must_use]
 pub fn get_string() -> String {
     unsafe {

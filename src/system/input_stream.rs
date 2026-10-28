@@ -182,7 +182,8 @@ mod tests {
     #[test]
     fn failing_seek_callbacks_return_minus_one() {
         let mut stream = FailingSeek;
-        let user_data = (&mut stream as *mut FailingSeek).cast::<c_void>();
+        let user_data: *mut FailingSeek = &mut stream;
+        let user_data = user_data.cast::<c_void>();
 
         // SAFETY: `user_data` points to a live `FailingSeek`.
         unsafe {
@@ -195,7 +196,8 @@ mod tests {
     #[test]
     fn read_with_negative_size_returns_minus_one() {
         let mut stream = FailingSeek;
-        let user_data = (&mut stream as *mut FailingSeek).cast::<c_void>();
+        let user_data: *mut FailingSeek = &mut stream;
+        let user_data = user_data.cast::<c_void>();
         let mut buf = [0u8; 4];
 
         // SAFETY: `user_data` points to a live `FailingSeek`, and `buf` is

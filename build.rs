@@ -155,7 +155,6 @@ fn main() {
     // Need to probe Cargo's env as build.rs uses the default toolchain to
     // run the build meaning that #[cfg(..)]'s won't work
     let is_windows = env::var("CARGO_CFG_WINDOWS").is_ok();
-    let is_unix = env::var("CARGO_CFG_UNIX").is_ok();
     let is_linux = env::var("CARGO_CFG_TARGET_OS")
         .map(|os| os == "linux")
         .unwrap_or(false);
