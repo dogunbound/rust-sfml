@@ -52,7 +52,9 @@ use {
 /// supports that size is used.
 ///
 /// [`RcText`]: crate::graphics::RcText
-#[derive(Debug)]
+///
+/// Cloning an `RcFont` clones the reference counter and shares the same font.
+#[derive(Clone, Debug)]
 pub struct RcFont {
     font: Rc<RefCell<FBox<Font>>>,
 }
@@ -376,14 +378,5 @@ impl RcFont {
     /// Allows other rc variants to request a weak pointer to the texture
     pub(super) fn downgrade(&self) -> std::rc::Weak<RefCell<FBox<Font>>> {
         Rc::downgrade(&self.font)
-    }
-}
-
-impl ToOwned for RcFont {
-    type Owned = RcFont;
-    fn to_owned(&self) -> Self {
-        RcFont {
-            font: Rc::new(RefCell::new(self.font.borrow().to_owned())),
-        }
     }
 }
