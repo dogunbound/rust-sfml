@@ -93,19 +93,19 @@ impl View {
 impl View {
     /// Get the current orientation of a view
     ///
-    /// Return the rotation angle of the view, in degrees
+    /// Return the rotation angle of the view
     ///
     /// ```
     /// # use sfml::graphics::View;
     /// # use sfml::system::Angle;
     /// let mut view = View::new().expect("failed to create view");
-    /// assert_eq!(view.rotation(), 0.);
+    /// assert_eq!(view.rotation(), Angle::degrees(0.));
     /// view.rotate(Angle::degrees(45.));
-    /// assert_eq!(view.rotation(), 45.);
+    /// assert_eq!(view.rotation(), Angle::degrees(45.));
     /// ```
     #[must_use]
-    pub fn rotation(&self) -> f32 {
-        unsafe { ffi::sfView_getRotation(self) }
+    pub fn rotation(&self) -> Angle {
+        Angle::degrees(unsafe { ffi::sfView_getRotation(self) })
     }
     /// Get the center of a view
     ///
