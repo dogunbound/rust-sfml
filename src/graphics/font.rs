@@ -65,7 +65,7 @@ impl Font {
     }
     /// Creates a new `Font` from a file on the filesystem.
     ///
-    /// See [`Self::load_from_file`].
+    /// See [`Self::open_from_file`].
     ///
     /// ```
     /// # use sfml::graphics::Font;
@@ -79,11 +79,11 @@ impl Font {
     }
     /// Creates a new `Font` from font file data in memory.
     ///
-    /// See [`Self::load_from_memory`].
+    /// See [`Self::open_from_memory`].
     ///
     /// # Safety
     ///
-    /// Also see [`Self::load_from_memory`].
+    /// Also see [`Self::open_from_memory`].
     pub unsafe fn from_memory(data: &[u8]) -> SfResult<FBox<Self>> {
         let mut new = Self::new()?;
         unsafe {
@@ -93,7 +93,7 @@ impl Font {
     }
     /// Creates a new `Font` from static font file data in memory.
     ///
-    /// See [`Self::load_from_memory_static`].
+    /// See [`Self::open_from_memory`].
     pub fn from_memory_static(data: &'static [u8]) -> SfResult<FBox<Self>> {
         let mut new = Self::new()?;
         new.load_from_memory_static(data)?;
@@ -186,7 +186,7 @@ impl Font {
     ///
     /// This function is safe because the font will stay in memory as long as required.
     ///
-    /// See [`Self::load_from_memory`].
+    /// See [`Self::open_from_memory`].
     pub fn load_from_memory_static(&mut self, data: &'static [u8]) -> SfResult<()> {
         unsafe { self.open_from_memory(data) }
     }
