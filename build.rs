@@ -183,7 +183,6 @@ fn main() {
     // we cannot support debug builds of SFML.
     cmake.profile("Release");
     cmake
-        .define("CMAKE_FIND_DEBUG_MODE", "TRUE")
         .define("BUILD_SHARED_LIBS", "FALSE")
         .define("SFML_BUILD_NETWORK", "FALSE")
         .define("SFML_INSTALL_PKGCONFIG_FILES", "FALSE")
