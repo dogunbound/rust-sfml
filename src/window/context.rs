@@ -83,7 +83,7 @@ impl Context {
 fn test_settings() {
     use {crate::window::Window, std::thread};
 
-    let window = Window::new_open(
+    let window = Window::new(
         (32, 32),
         "test",
         Default::default(),
