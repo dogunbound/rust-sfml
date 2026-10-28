@@ -365,7 +365,7 @@ impl RcFont {
 
     /// Get the source font of an [`RcFont`]
     ///
-    /// It let's you temprorarily borrow the [`Font`] bieng held by [`RcFont`].
+    /// It lets you temporarily borrow the [`Font`] being held by [`RcFont`].
     /// This may be useful for many things like using a temporary text object.
     ///
     /// Returns [`Font`]
