@@ -54,9 +54,8 @@ impl RcSprite {
     /// Create a new sprite with a texture and a source rectangle
     ///
     /// # Panics
-    /// Panics during const evaluation.
-    /// This method will panic during const evaluation if the string cannot be
-    /// determined to be null or not.
+    ///
+    /// Panics if the sprite allocation fails.
     #[must_use]
     pub fn with_texture_and_rect(texture: &RcTexture, rect: IntRect) -> RcSprite {
         let sp = unsafe { ffi::sfSprite_new(texture.raw_texture(), rect) };

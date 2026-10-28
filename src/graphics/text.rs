@@ -53,12 +53,12 @@ pub struct Text<'s> {
 impl<'s> Text<'s> {
     /// Create a new text with initialized value
     ///
-    /// Default value for characterSize on SFML is 30.i
+    /// Default value for characterSize on SFML is 30.
     ///
     /// # Panics
-    /// Panics during const evaluation.
-    /// This method will panic during const evaluation if the string cannot be
-    /// determined to be null or not.
+    ///
+    /// Panics if the text allocation fails or if the string contains an
+    /// interior NUL.
     ///
     /// # Arguments
     /// * string - The string of the text
