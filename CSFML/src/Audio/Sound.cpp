@@ -155,7 +155,7 @@ extern "C" float sfSound_getDopplerFactor(const sf::Sound *sound) {
 }
 
 extern "C" float sfSound_getDirectionalAttenuationFactor(const sf::Sound *sound) {
-    return sound->getDopplerFactor();
+    return sound->getDirectionalAttenuationFactor();
 }
 
 extern "C" float sfSound_getMaxDistance(const sf::Sound *sound) {
