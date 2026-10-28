@@ -240,21 +240,25 @@ impl Image {
 
     /// Return the memory buffer of this image.
     ///
+    /// Returns an empty slice when the image has no pixel data.
+    ///
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
     /// let color = Color::rgba(1, 2, 3, 4);
     /// let image = Image::new_solid(Vector2u::new(1, 1), color).expect("failed to create image");
     /// assert_eq!(image.pixel_data(), &[1, 2, 3, 4]);
+    /// assert_eq!(Image::new().expect("failed to create image").pixel_data(), &[]);
     /// ```
     #[must_use]
     pub fn pixel_data(&self) -> &[u8] {
-        unsafe {
-            let size = self.size();
-            let pixels = ffi::sfImage_getPixelsPtr(self);
-
-            slice::from_raw_parts(pixels, (size.x * size.y * 4) as usize)
+        let size = self.size();
+        let pixels = unsafe { ffi::sfImage_getPixelsPtr(self) };
+        if pixels.is_null() {
+            return &[];
         }
+
+        unsafe { slice::from_raw_parts(pixels, (size.x * size.y * 4) as usize) }
     }
 }
 
