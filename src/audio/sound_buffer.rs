@@ -150,18 +150,24 @@ impl SoundBuffer {
         unsafe { ffi::audio::sfSoundBuffer_getSampleCount(self) }
     }
 
-    /// Get the samples stored in the buffer
+    /// Get the samples stored in the buffer.
+    ///
+    /// Returns an empty slice when the buffer has no sample data.
     ///
     /// # Panics
     ///
     /// Panics if the sample count exceeds usize range
     #[must_use]
     pub fn samples(&self) -> &[i16] {
+        let data = unsafe { ffi::audio::sfSoundBuffer_getSamples(self) };
+        if data.is_null() {
+            return &[];
+        }
         let len: usize = self
             .sample_count()
             .try_into()
             .expect("Overflow when casting sample count to usize");
-        unsafe { slice::from_raw_parts(ffi::audio::sfSoundBuffer_getSamples(self), len) }
+        unsafe { slice::from_raw_parts(data, len) }
     }
 
     /// Get the number of channels used by a sound buffer
