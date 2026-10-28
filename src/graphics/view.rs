@@ -187,7 +187,7 @@ impl View {
     /// let mut view = View::new();
     /// view.rotate(Angle::degrees(30.));
     /// view.rotate(Angle::degrees(15.));
-    /// assert_eq!(view.rotation(), 45.);
+    /// assert_eq!(view.rotation(), Angle::degrees(45.));
     /// ```
     pub fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfView_rotate(self, angle.as_degrees()) }
