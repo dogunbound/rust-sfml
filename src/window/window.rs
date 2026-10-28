@@ -443,7 +443,7 @@ impl Window {
     ///
     /// Pass `None` to unset the minimum size
     pub fn set_minimum_size(&mut self, size: Option<Vector2u>) {
-        let ptr = size.as_ref().map_or(std::ptr::null(), |v| v);
+        let ptr = size.as_ref().map_or(std::ptr::null(), std::ptr::from_ref);
         unsafe {
             ffi::sfWindow_setMinimumSize(self, ptr);
         }
@@ -453,7 +453,7 @@ impl Window {
     ///
     /// Pass `None` to unset the maximum size
     pub fn set_maximum_size(&mut self, size: Option<Vector2u>) {
-        let ptr = size.as_ref().map_or(std::ptr::null(), |v| v);
+        let ptr = size.as_ref().map_or(std::ptr::null(), std::ptr::from_ref);
         unsafe {
             ffi::sfWindow_setMaximumSize(self, ptr);
         }
