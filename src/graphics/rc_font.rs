@@ -192,6 +192,18 @@ impl RcFont {
             .glyph(codepoint, character_size, bold, outline_thickness)
     }
 
+    /// Determine if this font has a glyph representing the requested code point.
+    ///
+    /// ```
+    /// # use sfml::graphics::RcFont;
+    /// # let font = RcFont::from_file("examples/resources/sansation.ttf").expect("failed to load font");
+    /// assert!(font.has_glyph('A' as u32));
+    /// ```
+    #[must_use]
+    pub fn has_glyph(&self, codepoint: u32) -> bool {
+        self.font.borrow().has_glyph(codepoint)
+    }
+
     /// Returns the font information.
     ///
     /// # Usage Example
