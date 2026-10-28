@@ -62,7 +62,7 @@ impl Image {
     /// `data` is expected to contain `size.x * size.y * 4` bytes in RGBA
     /// order. A zero-sized image is allowed and produces an empty image.
     ///
-    /// See [`Self::recreate_from_pixels`].
+    /// See [`Self::resize_with_pixels`].
     ///
     /// # Panics
     ///
@@ -435,7 +435,14 @@ impl Image {
     /// This function fails if the image is empty, or if
     /// the format was invalid.
     ///
-    /// Returns an optional buffer None for failure
+    /// # Returns
+    ///
+    /// The encoded image data on success.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`SfError::CallFailed`](crate::SfError::CallFailed) if the
+    /// image is empty or the format is invalid.
     #[must_use = "The returned buffer contains the saved data. Ignoring this result will discard the exported memory."]
     pub fn save_to_memory(&self, format: &str) -> SfResult<FBox<Buffer>> {
         let c_str = CString::new(format)?;
