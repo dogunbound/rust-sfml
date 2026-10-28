@@ -210,7 +210,7 @@ extern "C" float sfMusic_getMinGain(const sf::Music *music) {
 }
 
 extern "C" float sfMusic_getMaxGain(const sf::Music *music) {
-    return music->getMinGain();
+    return music->getMaxGain();
 }
 
 extern "C" float sfMusic_getAttenuation(const sf::Music *music) {
