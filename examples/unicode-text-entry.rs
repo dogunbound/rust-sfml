@@ -24,7 +24,7 @@ fn main() -> SfResult<()> {
     window.set_vertical_sync_enabled(true);
 
     // Showcase delayed initialization of font
-    let mut font = Font::new()?;
+    let mut font = Font::new();
 
     match std::env::args().nth(1) {
         Some(path) => font.open_from_file(&path)?,
