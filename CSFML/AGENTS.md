@@ -54,7 +54,7 @@ Summary of the `CSFML/` directory. It is a modified C++ shim over SFML 3.1 that 
 - `RenderWindow.cpp`: `sf::RenderWindow` wrapper.
 - `RenderStates.hpp`: C struct bundling blend mode, transform, texture, shader, and stencil state. Its 9-float `sfTransform` field is legacy and unused.
 - `Texture.cpp`: `sf::Texture` wrapper.
-- `Transform.hpp`: C 3x3 transform struct and converters to and from `sf::Transform`.
+- `Transform.hpp`: Legacy unused 9-float C transform struct and converters. The Rust bindings use a 16-float `Transform`, so do not use this struct with them.
 
 ## src/System
 
