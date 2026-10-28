@@ -111,21 +111,10 @@ impl RcText {
     /// Set the font of the `RcText`
     ///
     /// font - New [`RcFont`]
-    ///
-    /// # Panics
-    ///
-    /// Panics on [`std::rc::Rc`] related shenanigans.
     pub fn set_font(&mut self, font: &RcFont) {
         self.set_rc_font(font);
         unsafe {
-            #[expect(clippy::unwrap_used)]
-            ffi::sfText_setFont(
-                self.handle.as_ptr(),
-                (*self.font.upgrade().unwrap().as_ptr())
-                    .0
-                    .as_ptr()
-                    .cast_const(),
-            );
+            ffi::sfText_setFont(self.handle.as_ptr(), font.raw_font());
         }
     }
 
