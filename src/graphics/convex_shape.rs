@@ -130,7 +130,7 @@ impl Transformable for ConvexShape<'_> {
     fn rotation(&self) -> Angle {
         unsafe { Angle::degrees(ffi::sfConvexShape_getRotation(self.handle.as_ptr())) }
     }
-    fn get_scale(&self) -> Vector2f {
+    fn scale(&self) -> Vector2f {
         unsafe { ffi::sfConvexShape_getScale(self.handle.as_ptr()) }
     }
     fn origin(&self) -> Vector2f {
@@ -142,7 +142,7 @@ impl Transformable for ConvexShape<'_> {
     fn rotate(&mut self, angle: Angle) {
         unsafe { ffi::sfConvexShape_rotate(self.handle.as_ptr(), angle.as_degrees()) }
     }
-    fn scale<F: Into<Vector2f>>(&mut self, factors: F) {
+    fn scale_by<F: Into<Vector2f>>(&mut self, factors: F) {
         unsafe { ffi::sfConvexShape_scale(self.handle.as_ptr(), factors.into()) }
     }
     fn transform(&self) -> &Transform {

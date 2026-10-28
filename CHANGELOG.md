@@ -19,6 +19,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- Rename `Transformable::get_scale` to `scale` and the mutating `Transformable::scale` to `scale_by`. `set_scale` stays the absolute setter
 - Rename `VertexBuffer::available` to `VertexBuffer::is_available`, matching `Shader::is_available`
 - `RenderTexture::resize` returns `bool`; the constructors still return `SfResult` and map a failed resize to `SfError::CallFailed`
 - `Context::set_active` and `RenderWindow::set_active` return `bool` instead of `SfResult<()>`, matching `Window::set_active` and `RenderTexture::set_active`

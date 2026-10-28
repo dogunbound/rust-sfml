@@ -35,7 +35,7 @@ impl FloatingResource {
 
     fn with_font(font: &RcFont, up: bool, left: bool, speed: f32) -> Self {
         let mut text = RcText::new("", font, 16);
-        text.scale(Vector2f::new(2., 2.));
+        text.scale_by(Vector2f::new(2., 2.));
         Self {
             up,
             left,
@@ -113,7 +113,7 @@ fn get_set_smooth_rc_text(font: &RcFont) -> RcText {
         font,
         16,
     );
-    set_smooth_text.scale(Vector2f::new(2., 2.));
+    set_smooth_text.scale_by(Vector2f::new(2., 2.));
 
     set_smooth_text
 }
