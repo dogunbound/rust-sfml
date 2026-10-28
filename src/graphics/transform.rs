@@ -10,6 +10,9 @@ use crate::{
 ///
 /// A `Transform` specifies how to translate,
 /// rotate, scale, shear, project, whatever things.
+///
+/// Internally the matrix is stored as 16 floats in the layout used by SFML
+/// and OpenGL, not as a compact 9-float array.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Transform {
@@ -18,6 +21,9 @@ pub struct Transform {
 
 impl Transform {
     /// Creates a new transform from a 3x3 matrix.
+    ///
+    /// The matrix is stored in the crate's 16-float internal layout; the
+    /// additional elements hold the homogeneous row and column.
     ///
     /// # Arguments
     ///
@@ -318,9 +324,9 @@ impl Mul for Transform {
 
     /// Combines two transformations
     ///
-    /// Equivelant to calling `left.clone().combine(right)`
+    /// Equivalent to calling `left.combine(&right)`
     ///
-    /// Returns new combined Transform
+    /// Returns a new combined Transform
     /// ```
     /// # use sfml::graphics::Transform;
     /// let test_transform = Transform::new(1., 2., 3., 4., 5., 6., 7., 8., 9.);
@@ -337,9 +343,9 @@ impl Mul for Transform {
 impl MulAssign for Transform {
     /// Combines two transformations
     ///
-    /// Equivelant to calling `left.combine(right)`
+    /// Equivalent to calling `left.combine(&right)`
     ///
-    /// Returns new combined Transform
+    /// Combines the other transform into this one in place.
     /// ```
     /// # use sfml::graphics::Transform;
     /// let mut test_transform = Transform::new(1., 2., 3., 4., 5., 6., 7., 8., 9.);
