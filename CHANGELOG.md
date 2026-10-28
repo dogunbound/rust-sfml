@@ -82,7 +82,7 @@
 - `SoundRecorder` now requires `Send`
 - Make `RcFont::texture` return `Ref` rather than "leak" a borrow
 - Make all fields on `RenderStates` public
-- `Texture::upate_from_pixels` is now a safe, checked function
+- `Texture::update_from_pixels` is now a safe, checked function
 
 ### Fixed
 
