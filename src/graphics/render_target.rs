@@ -155,17 +155,17 @@ pub trait RenderTarget {
     /// located at (10, 50) in your render-window may map to the point
     /// (150, 75) in your 2D world -- if the view is translated by (140, 25).
     ///
-    /// This function is typically used to find which point (or object) is
-    /// located below the mouse cursor.
+    /// This function is typically used to find where a world-space point
+    /// appears on the target.
     ///
     /// This version uses the current view for calculations, see the
-    /// [`map_pixel_to_coords`](RenderTarget::map_pixel_to_coords) function if
+    /// [`map_coords_to_pixel`](RenderTarget::map_coords_to_pixel) function if
     /// you want to use a custom view.
     ///
     /// # Arguments
-    /// * point - Pixel to convert
+    /// * point - Point to convert
     ///
-    /// Return the converted point, in "world" units
+    /// Return the converted point, in target pixels
     fn map_coords_to_pixel_current_view(&self, point: Vector2f) -> Vector2i;
 
     /// Draw a drawable object to the render target
