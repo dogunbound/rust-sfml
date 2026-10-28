@@ -215,7 +215,7 @@ impl VertexBuffer {
     ///
     /// Return True if vertex buffers are supported, false otherwise
     #[must_use]
-    pub fn available() -> bool {
+    pub fn is_available() -> bool {
         unsafe { ffi::sfVertexBuffer_isAvailable() }
     }
 }
