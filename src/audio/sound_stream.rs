@@ -318,13 +318,13 @@ impl<S: SoundStream> SoundSource for SoundStreamPlayer<'_, S> {
     fn directional_attenuation_factor(&self) -> f32 {
         unsafe { sfCustomSoundStream_getDirectionalAttenuationFactor(self.handle.as_ptr()) }
     }
-    fn get_max_distance(&self) -> f32 {
+    fn max_distance(&self) -> f32 {
         unsafe { sfCustomSoundStream_getMaxDistance(self.handle.as_ptr()) }
     }
-    fn get_min_gain(&self) -> f32 {
+    fn min_gain(&self) -> f32 {
         unsafe { sfCustomSoundStream_getMinGain(self.handle.as_ptr()) }
     }
-    fn get_max_gain(&self) -> f32 {
+    fn max_gain(&self) -> f32 {
         unsafe { sfCustomSoundStream_getMaxGain(self.handle.as_ptr()) }
     }
     fn status(&self) -> super::sound_source::Status {
