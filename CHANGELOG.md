@@ -19,6 +19,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- `View::rotation` returns `Angle` instead of a raw `f32` number of degrees
 - `Image::{new, new_solid, from_pixels}` no longer return `SfResult`; they panic if the image cannot be allocated. `from_pixels` is now safe and documents the expected `size.x * size.y * 4` byte length
 - `Image::pixel_data` now returns `&[u8]` and reports an image without pixel data as an empty slice
 - Rename `SoundSource::{get_max_distance, get_min_gain, get_max_gain}` to `max_distance`, `min_gain`, and `max_gain`, matching the other getters
