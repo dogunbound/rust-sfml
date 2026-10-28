@@ -63,6 +63,16 @@ impl RcTexture {
     pub fn size(&self) -> Vector2u {
         self.texture.borrow().size()
     }
+    /// Resize a texture.
+    ///
+    /// # Arguments
+    /// * size - Width and height of the texture
+    /// * srgb - `true` to enable sRGB conversion, `false` to disable it
+    ///
+    /// Returns `true` if resizing was successful, `false` if it failed
+    pub fn resize(&mut self, size: Vector2u, srgb: bool) -> bool {
+        self.texture.borrow_mut().resize(size, srgb)
+    }
     /// Tell whether the smooth filter is enabled or not for a texture
     ///
     /// Return true if smoothing is enabled, false if it is disabled

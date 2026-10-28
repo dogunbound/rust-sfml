@@ -3,6 +3,7 @@
 ## New
 
 ### Added
+- Add `RcTexture::resize`, matching `Texture::resize`
 - Add `RcFont::has_glyph`, matching `Font::has_glyph`
 - Add `RcText::set_outline_color`, matching `Text::set_outline_color`
 - Add `Text::shaped_glyphs` and `RcText::shaped_glyphs` to access the glyphs of a text after shaping, along with `graphics::ShapedGlyph` and `graphics::TextDirection`
