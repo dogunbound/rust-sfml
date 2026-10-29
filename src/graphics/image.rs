@@ -27,37 +27,55 @@ impl Image {
     /// ```
     /// # use sfml::graphics::Image;
     /// # use sfml::system::Vector2u;
-    /// let image = Image::new().expect("failed to create image");
+    /// let image = Image::new();
     /// assert_eq!(image.size(), Vector2u::new(0, 0));
     /// ```
-    pub fn new() -> SfResult<FBox<Self>> {
-        FBox::new(unsafe { ffi::sfImage_new() }).into_sf_result()
+    ///
+    /// # Panics
+    ///
+    /// Panics if the image allocation fails.
+    pub fn new() -> FBox<Self> {
+        FBox::new(unsafe { ffi::sfImage_new() }).expect("Failed to create Image")
     }
     /// Create a new `Image` filled with a solid color.
     ///
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let image = Image::new_solid(Vector2u::new(2, 3), Color::RED).expect("failed to create image");
+    /// let image = Image::new_solid(Vector2u::new(2, 3), Color::RED);
     /// assert_eq!(image.size(), Vector2u::new(2, 3));
     /// assert_eq!(image.pixel_at(Vector2u::new(0, 0)), Some(Color::RED));
     /// ```
-    pub fn new_solid(size: Vector2u, color: Color) -> SfResult<FBox<Self>> {
-        let mut img = Self::new()?;
+    ///
+    /// # Panics
+    ///
+    /// Panics if the image allocation fails.
+    pub fn new_solid(size: Vector2u, color: Color) -> FBox<Self> {
+        let mut img = Self::new();
         img.resize_with_color(size, color);
-        Ok(img)
+        img
     }
     /// Create a new `Image` from the provided RGBA pixel data.
     ///
+    /// `data` is expected to contain `size.x * size.y * 4` bytes in RGBA
+    /// order. A zero-sized image is allowed and produces an empty image.
+    ///
     /// See [`Self::recreate_from_pixels`].
     ///
-    /// # Safety
+    /// # Panics
     ///
-    /// Also see [`Self::recreate_from_pixels`].
-    pub unsafe fn from_pixels(size: Vector2u, data: &[u8]) -> SfResult<FBox<Self>> {
-        let mut img = Self::new()?;
+    /// Panics if the image allocation fails.
+    ///
+    /// ```
+    /// # use sfml::graphics::{Color, Image};
+    /// # use sfml::system::Vector2u;
+    /// let image = Image::from_pixels(Vector2u::new(1, 1), &[255, 0, 0, 255]);
+    /// assert_eq!(image.pixel_at(Vector2u::new(0, 0)), Some(Color::RED));
+    /// ```
+    pub fn from_pixels(size: Vector2u, data: &[u8]) -> FBox<Self> {
+        let mut img = Self::new();
         img.resize_with_pixels(size, data);
-        Ok(img)
+        img
     }
     /// Create a new `Image` from an image file on the filesystem.
     ///
@@ -70,7 +88,7 @@ impl Image {
     /// assert!(image.size().y > 0);
     /// ```
     pub fn from_file(filename: &str) -> SfResult<FBox<Self>> {
-        let mut new = Self::new()?;
+        let mut new = Self::new();
         new.load_from_file(filename)?;
         Ok(new)
     }
@@ -81,14 +99,14 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let source = Image::new_solid(Vector2u::new(2, 2), Color::RED).expect("failed to create image");
+    /// let source = Image::new_solid(Vector2u::new(2, 2), Color::RED);
     /// let data = source.save_to_memory("png").expect("failed to encode image");
     /// let loaded = Image::from_memory(&data).expect("failed to decode image");
     /// assert_eq!(loaded.size(), Vector2u::new(2, 2));
     /// assert_eq!(loaded.pixel_at(Vector2u::new(0, 0)), Some(Color::RED));
     /// ```
     pub fn from_memory(data: &[u8]) -> SfResult<FBox<Self>> {
-        let mut new = Self::new()?;
+        let mut new = Self::new();
         new.load_from_memory(data)?;
         Ok(new)
     }
@@ -96,7 +114,7 @@ impl Image {
     ///
     /// See [`Self::load_from_stream`].
     pub fn from_stream<T: Read + Seek>(stream: &mut T) -> SfResult<FBox<Self>> {
-        let mut new = Self::new()?;
+        let mut new = Self::new();
         new.load_from_stream(stream)?;
         Ok(new)
     }
@@ -109,7 +127,7 @@ impl Image {
     ///
     /// ```
     /// # use sfml::graphics::Image;
-    /// let mut image = Image::new().expect("failed to create image");
+    /// let mut image = Image::new();
     /// image.load_from_file("examples/resources/logo.png").expect("failed to load image");
     /// assert!(image.size().x > 0);
     /// ```
@@ -169,7 +187,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let mut image = Image::new_solid(Vector2u::new(2, 2), Color::BLACK).expect("failed to create image");
+    /// let mut image = Image::new_solid(Vector2u::new(2, 2), Color::BLACK);
     /// image.set_pixel(Vector2u::new(1, 0), Color::GREEN).expect("in-bounds");
     /// assert_eq!(image.pixel_at(Vector2u::new(1, 0)), Some(Color::GREEN));
     /// ```
@@ -222,7 +240,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let image = Image::new_solid(Vector2u::new(2, 2), Color::CYAN).expect("failed to create image");
+    /// let image = Image::new_solid(Vector2u::new(2, 2), Color::CYAN);
     /// assert_eq!(image.pixel_at(Vector2u::new(1, 1)), Some(Color::CYAN));
     /// assert_eq!(image.pixel_at(Vector2u::new(2, 2)), None);
     /// ```
@@ -246,9 +264,9 @@ impl Image {
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
     /// let color = Color::rgba(1, 2, 3, 4);
-    /// let image = Image::new_solid(Vector2u::new(1, 1), color).expect("failed to create image");
+    /// let image = Image::new_solid(Vector2u::new(1, 1), color);
     /// assert_eq!(image.pixel_data(), &[1, 2, 3, 4]);
-    /// assert_eq!(Image::new().expect("failed to create image").pixel_data(), &[]);
+    /// assert_eq!(Image::new().pixel_data(), &[]);
     /// ```
     #[must_use]
     pub fn pixel_data(&self) -> &[u8] {
@@ -277,7 +295,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let mut image = Image::new_solid(Vector2u::new(2, 2), Color::RED).expect("failed to create image");
+    /// let mut image = Image::new_solid(Vector2u::new(2, 2), Color::RED);
     /// image.create_mask_from_color(Color::RED, 0);
     /// assert_eq!(image.pixel_at(Vector2u::new(0, 0)), Some(Color::rgba(255, 0, 0, 0)));
     /// ```
@@ -290,7 +308,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let mut image = Image::new_solid(Vector2u::new(2, 1), Color::RED).expect("failed to create image");
+    /// let mut image = Image::new_solid(Vector2u::new(2, 1), Color::RED);
     /// image.set_pixel(Vector2u::new(0, 0), Color::BLUE).expect("in-bounds");
     /// image.flip_horizontally();
     /// assert_eq!(image.pixel_at(Vector2u::new(1, 0)), Some(Color::BLUE));
@@ -304,7 +322,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let mut image = Image::new_solid(Vector2u::new(1, 2), Color::RED).expect("failed to create image");
+    /// let mut image = Image::new_solid(Vector2u::new(1, 2), Color::RED);
     /// image.set_pixel(Vector2u::new(0, 0), Color::BLUE).expect("in-bounds");
     /// image.flip_vertically();
     /// assert_eq!(image.pixel_at(Vector2u::new(0, 1)), Some(Color::BLUE));
@@ -337,8 +355,8 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image, IntRect};
     /// # use sfml::system::{Vector2i, Vector2u};
-    /// let mut dest = Image::new_solid(Vector2u::new(2, 2), Color::BLACK).expect("failed to create image");
-    /// let source = Image::new_solid(Vector2u::new(1, 1), Color::GREEN).expect("failed to create image");
+    /// let mut dest = Image::new_solid(Vector2u::new(2, 2), Color::BLACK);
+    /// let source = Image::new_solid(Vector2u::new(1, 1), Color::GREEN);
     ///
     /// let whole = IntRect::new(Vector2i::new(0, 0), Vector2i::new(1, 1));
     /// dest.copy_image(&source, Vector2u::new(1, 1), whole, false).expect("failed to copy");
@@ -362,7 +380,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let mut image = Image::new().expect("failed to create image");
+    /// let mut image = Image::new();
     /// image.resize_with_color(Vector2u::new(3, 2), Color::BLUE);
     /// assert_eq!(image.size(), Vector2u::new(3, 2));
     /// assert_eq!(image.pixel_at(Vector2u::new(2, 1)), Some(Color::BLUE));
@@ -381,7 +399,7 @@ impl Image {
     /// ```
     /// # use sfml::graphics::{Color, Image};
     /// # use sfml::system::Vector2u;
-    /// let mut image = Image::new().expect("failed to create image");
+    /// let mut image = Image::new();
     /// let pixels = [255, 0, 0, 255, 0, 255, 0, 255];
     /// image.resize_with_pixels(Vector2u::new(2, 1), &pixels);
     /// assert_eq!(image.size(), Vector2u::new(2, 1));
@@ -455,7 +473,7 @@ impl Drop for Image {
 /// ```
 /// # use sfml::graphics::{Color, Image, PixelAccessError};
 /// # use sfml::system::Vector2u;
-/// let mut image = Image::new_solid(Vector2u::new(1, 1), Color::BLACK).expect("failed to create image");
+/// let mut image = Image::new_solid(Vector2u::new(1, 1), Color::BLACK);
 /// match image.set_pixel(Vector2u::new(1, 0), Color::WHITE) {
 ///     Err(PixelAccessError::XTooLarge { x, .. }) => assert_eq!(x, 1),
 ///     other => panic!("expected XTooLarge, got {other:?}"),
