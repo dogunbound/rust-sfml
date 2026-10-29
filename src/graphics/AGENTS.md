@@ -12,7 +12,7 @@
 - `coordinate_type.rs`: `CoordinateType`, normalized or pixel texture coordinates.
 - `custom_shape.rs`: `CustomShape` and the `CustomShapePoints` trait, for user-defined shape geometry.
 - `drawable.rs`: `Drawable` trait for anything that can be drawn to a `RenderTarget`.
-- `font.rs`: `Font`, an opaque Rust handle for loading and glyph/kerning/metric queries, plus `FontInfo`. Stream loading is buffered eagerly by the C++ `sfFont` wrapper.
+- `font.rs`: `Font`, an opaque Rust handle for loading and glyph/kerning/metric queries, plus `FontInfo`. Stream loading is unsafe; the `InputStream` adapter must outlive every use of the font.
 - `glsl.rs`: GLSL-style vector and matrix types (`Vec2`, `IVec4`, `Mat4`, and others) for shader uniforms.
 - `glyph.rs`: `Glyph`, the metrics and texture rect for one character.
 - `glyph_pre_processor.rs`: `GlyphAppearance` and the C trampoline that lets users adjust glyphs before text layout.

@@ -3,10 +3,10 @@ use {
         SfResult,
         cpp::FBox,
         graphics::{Font, Glyph, Texture, font::Info},
+        system::InputStream,
     },
     std::{
         cell::{Ref, RefCell},
-        io::{Read, Seek},
         rc::Rc,
     },
 };
@@ -286,12 +286,15 @@ impl RcFont {
     /// Windows FNT, BDF, PFR and Type 42.
     ///
     /// # Safety
-    /// SFML cannot preload all the font data in this function, so the stream has to remain
-    /// accessible until the `RcFont` object loads a new font or is destroyed.
+    ///
+    /// SFML reads from the stream lazily through `FreeType` callbacks, so
+    /// `stream` (the adapter and its source) must outlive every use of the
+    /// returned font, including every [`RcText`] bound to it. Drop the font
+    /// before the stream.
     ///
     /// # See also
     /// [`RcFont::from_file`], [`RcFont::from_memory`]
-    pub unsafe fn from_stream<T: Read + Seek>(stream: &mut T) -> SfResult<Self> {
+    pub unsafe fn from_stream<S>(stream: &InputStream<'_, S>) -> SfResult<Self> {
         Ok(RcFont {
             font: Rc::new(RefCell::new(unsafe { Font::from_stream(stream) }?)),
         })

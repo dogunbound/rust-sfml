@@ -6,10 +6,7 @@ use {
         graphics::{Glyph, Texture},
         system::InputStream,
     },
-    std::{
-        ffi::{CStr, CString},
-        io::{Read, Seek},
-    },
+    std::ffi::{CStr, CString},
 };
 
 decl_opaque! {
@@ -52,6 +49,11 @@ decl_opaque! {
 /// This needs to be taken into consideration when using [`Text`].
 /// If you need to display text of a certain size, make sure the corresponding bitmap font that
 /// supports that size is used.
+///
+/// Streams passed to [`Font::from_stream`] are read lazily through SFML's
+/// `FreeType` callbacks. The [`InputStream`] adapter and its source must outlive
+/// every use of the font, including every [`Text`] bound to it; drop the font
+/// before the stream.
 ///
 /// [`Text`]: crate::graphics::Text
 pub Font;
@@ -101,20 +103,26 @@ impl Font {
     }
     /// Creates a new `Font` from a streamable source.
     ///
-    /// See [`Self::load_from_stream`].
+    /// See [`Self::open_from_stream`].
     ///
     /// # Safety
     ///
-    /// Also see [`Self::load_from_stream`].
+    /// SFML reads from the stream lazily through `FreeType` callbacks, so
+    /// `stream` (the adapter and its source) must outlive every use of the
+    /// returned font, including every [`Text`] bound to it. Drop the font
+    /// before the stream.
     ///
     /// ```
     /// # use sfml::graphics::Font;
-    /// let mut stream = std::fs::File::open("examples/resources/sansation.ttf")
+    /// # use sfml::system::InputStream;
+    /// let mut file = std::fs::File::open("examples/resources/sansation.ttf")
     ///     .expect("failed to open font file");
-    /// let font = unsafe { Font::from_stream(&mut stream) }.expect("failed to load font");
+    /// let stream = InputStream::new(&mut file);
+    /// // SAFETY: `stream` outlives the font and every use of it.
+    /// let font = unsafe { Font::from_stream(&stream) }.expect("failed to load font");
     /// assert!(font.has_glyph('A' as u32));
     /// ```
-    pub unsafe fn from_stream<T: Read + Seek>(stream: &mut T) -> SfResult<FBox<Self>> {
+    pub unsafe fn from_stream<S>(stream: &InputStream<'_, S>) -> SfResult<FBox<Self>> {
         let mut new = Self::new()?;
         unsafe {
             new.open_from_stream(stream)?;
@@ -155,14 +163,15 @@ impl Font {
     /// Windows FNT, BDF, PFR and Type 42.
     ///
     /// # Safety
-    /// SFML cannot preload all the font data in this function, so the stream has to remain
-    /// accessible until the `Font` object loads a new font or is destroyed.
+    ///
+    /// SFML reads from the stream lazily through `FreeType` callbacks, so
+    /// `stream` must outlive every use of this font, including every [`Text`]
+    /// bound to it. Drop the font before the stream.
     ///
     /// # See also
     /// [`Font::from_file`], [`Font::from_memory`]
-    pub unsafe fn open_from_stream<T: Read + Seek>(&mut self, stream: &mut T) -> SfResult<()> {
-        let mut input_stream = InputStream::new(stream);
-        unsafe { ffi::sfFont_openFromStream(self, &raw mut *input_stream.stream) }.into_sf_result()
+    pub unsafe fn open_from_stream<S>(&mut self, stream: &InputStream<'_, S>) -> SfResult<()> {
+        unsafe { ffi::sfFont_openFromStream(self, stream.stream.0.as_ptr()) }.into_sf_result()
     }
 
     /// Load the font from a file in memory.
