@@ -23,6 +23,7 @@
 - Add `Window::create_vulkan_surface` and `RenderWindow::create_vulkan_surface`, to create a Vulkan surface for an open window
 
 ### Changed
+- `Font::from_stream`/`RcFont::from_stream` and the underlying open function are unsafe again and take a borrowed `InputStream`; the shim no longer buffers stream data, so the stream must outlive the font.
 - `Window::new` now creates and opens the window, taking the arguments that `Window::new_open` had. `Window::new_open` and the closed-window constructor are removed
 - `RcFont` and `RcTexture` now implement `Clone` by cloning the reference counter, and their deep-copy `ToOwned` impls are removed
 - `RcText` and `RcSprite` only guard the operations that genuinely need their font or texture. Other methods no longer print errors or panic when the resource is gone; glyph geometry and drawing return empty/default values, and `transform`/`inverse_transform` no longer panic
