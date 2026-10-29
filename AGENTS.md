@@ -14,7 +14,7 @@ If you plan to modify code in these directories, you must also read their `AGENT
 
 - Run `git submodule update --init` before the first build. `build.rs` builds SFML from `SFML/` with CMake, so the first build is slow and needs cmake and a C++ toolchain.
 - Linux packages: see `.github/workflows/linux.yml`. The README list is incomplete; `build.rs` also links udev, Xi, and harfbuzz.
-- MSRV is Rust 1.86 (`rust-version` in `Cargo.toml`; CI pins 1.86.0). Don't use newer std APIs.
+- MSRV is Rust 1.99 (`rust-version` in `Cargo.toml`; CI pins 1.99.0). Don't use newer std APIs.
 - `build.rs` always builds SFML in Release. Debug builds of SFML are unsupported on purpose (MSVC runtime linking), so don't "fix" this.
 - `build.rs` has Linux, Windows (MSVC and mingw), and macOS branches. The Windows and macOS branches can't be verified from Linux, so edit them carefully.
 

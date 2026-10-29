@@ -1,5 +1,10 @@
 # Changelog
 
+## NEW
+
+### Changed
+- Updated rust-sfml to rust version 1.99
+
 ## 3.1.0.0
 
 ### Added
