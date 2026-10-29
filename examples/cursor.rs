@@ -1,5 +1,6 @@
 use sfml::{
     SfResult,
+    cpp::FBox,
     graphics::{
         Color, Font, Rect, RectangleShape, RenderTarget, RenderWindow, Shape, Text, Transformable,
     },
@@ -74,6 +75,7 @@ fn bstyle(highlighted: bool, selected: bool, error: bool) -> ButtonStyle {
 
 fn main() -> SfResult<()> {
     example_ensure_right_working_dir();
+    let mut active_cursor: Option<FBox<Cursor>> = None;
     let mut rw = RenderWindow::new(
         (800, 800),
         "SFML cursor example",
@@ -140,6 +142,7 @@ fn main() -> SfResult<()> {
                                     unsafe {
                                         rw.set_mouse_cursor(&cursor);
                                     }
+                                    active_cursor = Some(cursor);
                                     selected_index = i;
                                 }
                                 Err(e) => {
@@ -168,6 +171,7 @@ fn main() -> SfResult<()> {
                             ) {
                                 Ok(cursor) => {
                                     rw.set_mouse_cursor(&cursor);
+                                    active_cursor = Some(cursor);
                                 }
                                 Err(e) => {
                                     eprintln!("{e}");
@@ -323,5 +327,7 @@ fn main() -> SfResult<()> {
         );
         rw.display();
     }
+    drop(rw);
+    let _ = active_cursor;
     Ok(())
 }
