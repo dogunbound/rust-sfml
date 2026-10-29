@@ -1,6 +1,6 @@
 # Changelog
 
-## New
+## 3.1.0.0
 
 ### Added
 - `CppString` can be compared with `str` and `&str` in either direction, matching the existing `impl PartialEq<CppString> for str`
