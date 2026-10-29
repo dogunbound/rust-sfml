@@ -24,7 +24,7 @@
 - `rc_texture.rs`: `RcTexture`, a reference-counted twin of `Texture`.
 - `rect.rs`: generic `Rect<T>` with `IntRect` and `FloatRect` aliases.
 - `rectangle_shape.rs`: `RectangleShape`, a rectangle drawable.
-- `render_states.rs`: `RenderStates`, the blend mode, transform, texture, and shader used for a draw call.
+- `render_states.rs`: `RenderStates`, the blend mode, transform, texture, shader, stencil mode, and texture coordinate type used for a draw call.
 - `render_target.rs`: `RenderTarget` trait with the draw methods shared by windows and textures.
 - `render_texture.rs`: `RenderTexture`, an off-screen render target.
 - `render_window.rs`: `RenderWindow`, a window that is also a render target and has event polling.
@@ -36,7 +36,7 @@
 - `text_enums.rs`: text layout enums: `LineAlignment`, `TextOrientation`, `ClusterGrouping`, `TextDirection`.
 - `text_style.rs`: `TextStyle` flags (bold, italic, underline, and so on).
 - `texture.rs`: `Texture`, GPU texture loading, updating, and mipmap generation.
-- `transform.rs`: `Transform`, a 3x3 affine transform with point and rect transformation.
+- `transform.rs`: `Transform`, a 3x3 affine transform stored as 16 floats (the SFML/OpenGL layout), with point and rect transformation.
 - `transformable.rs`: `Transformable` trait for position, rotation, scale, and origin.
 - `vertex.rs`: `Vertex`, a position, color, and texture coordinate, plus slice helpers.
 - `vertex_buffer.rs`: `VertexBuffer` and `VertexBufferUsage`, GPU-side vertex storage.

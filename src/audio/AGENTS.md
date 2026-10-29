@@ -16,6 +16,6 @@ Safe Rust API for SFML audio: playback, streaming, recording, and spatialization
 - `sound_stream.rs`: `SoundStream` trait for custom streamed sources, and `SoundStreamPlayer` that plays one.
 - `time_span.rs`: `TimeSpan`, a start offset and length used for loop ranges.
 
-## Rules
+## Keeping this file current
 
 If you add a new file to this folder, or make a significant change to an existing file that affects the summary above, you must update this `AGENTS.md` to match.

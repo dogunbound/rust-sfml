@@ -17,7 +17,8 @@ This repository ships a pre-commit hook in `.githooks/`. Enable it once per clon
 git config core.hooksPath .githooks
 ```
 
-The hook runs `rustfmt` over all tracked Rust files and stages any formatting
-changes. The generated `src/ffi/*_bindgen.rs` files carry `#[rustfmt::skip]`,
-so rustfmt leaves them untouched. The hook does nothing if `rustfmt` is not
-installed.
+The hook runs `rustfmt` over all tracked Rust files that have no unstaged
+changes and stages any formatting changes, so it never stages edits you did not
+mean to commit. The generated `src/ffi/*_bindgen.rs` files carry
+`#[rustfmt::skip]`, so rustfmt leaves them untouched. The hook does nothing if
+`rustfmt` is not installed.

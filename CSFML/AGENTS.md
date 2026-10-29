@@ -1,15 +1,22 @@
 # AGENTS.md
 
-> **Any new agent MUST update this file if they feel their changes impact this summary, or if they add a new file.**
-
-> **Any agent that modifies CSFML code MUST run `./format.sh` (from `CSFML/`) after finishing their changes.**
-
 Summary of the `CSFML/` directory. It is a modified C++ shim over SFML 3.1 that exposes a C ABI for rust-sfml. Each `.cpp` provides `extern "C"` functions (or a C-ABI wrapper class). Each `.hpp` provides the C-compatible types and conversion helpers used by those `.cpp` files.
+
+## Formatting
+
+Any agent that modifies CSFML code MUST run `./format.sh` from `CSFML/` after
+finishing their changes. It formats all of `CSFML/src`. Commit all of its
+changes in the same commit as the CSFML changes.
+
+## Keeping this file current
+
+If you add a file or change an existing file enough to affect the summary
+below, update this file in the same change.
 
 ## Top level
 
 - `README.md`: States this is a modified CSFML used internally by rust-sfml, and its design philosophy (minimal C++, safety checks in Rust).
-- `format.sh`: Runs `clang-format` over `src/`.
+- `format.sh`: Runs the C++ formatter over `src/`.
 - `license.txt`: CSFML license.
 
 ## src/Audio
@@ -32,14 +39,14 @@ Summary of the `CSFML/` directory. It is a modified C++ shim over SFML 3.1 that 
 ## src/Graphics
 
 - `VertexBuffer.cpp`: `sf::VertexBuffer` wrapper.
-- `TextEnums.hpp`: C enums for text line alignment and orientation.
+- `TextEnums.hpp`: C enums for text line alignment, orientation, and cluster grouping.
 - `Text.cpp`: `sf::Text` wrapper.
 - `BlendMode.hpp`: C enums for blend factors and equations.
 - `View.cpp`: `sf::View` wrapper (camera/viewport).
 - `Sprite.cpp`: `sf::Sprite` wrapper.
 - `Transform.cpp`: `sf::Transform` wrapper (2D matrix operations).
 - `Rect.hpp`: C float/int rect structs and converters to and from `sf::Rect`.
-- `StencilMode.hpp`: C enums for stencil comparison and update operations.
+- `StencilMode.hpp`: C enums for stencil comparison and update operations, plus the `sfStencilValue` value/mask struct.
 - `RenderTexture.cpp`: `sf::RenderTexture` wrapper (off-screen rendering).
 - `Font.cpp`: `sf::Font` wrapper.
 - `RectangleShape.cpp`: `sf::RectangleShape` wrapper.
@@ -52,7 +59,7 @@ Summary of the `CSFML/` directory. It is a modified C++ shim over SFML 3.1 that 
 - `Color.hpp`: C color struct and converters to and from `sf::Color`.
 - `PrimitiveType.hpp`: C enum for primitive types (points, lines, triangles, ...).
 - `RenderWindow.cpp`: `sf::RenderWindow` wrapper.
-- `RenderStates.hpp`: C struct bundling blend mode, transform, texture, shader, and stencil state. Its 9-float `sfTransform` field is legacy and unused.
+- `RenderStates.hpp`: C struct bundling blend mode, transform, texture, shader, stencil, and `coordinateType` state. Its 9-float `sfTransform` field is legacy and unused.
 - `Texture.cpp`: `sf::Texture` wrapper.
 - `Transform.hpp`: Legacy unused 9-float C transform struct and converters. The Rust bindings use a 16-float `Transform`, so do not use this struct with them.
 

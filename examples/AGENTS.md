@@ -1,7 +1,11 @@
 # AGENTS.md — Examples
 
 Standalone programs demonstrating the `sfml` crate. Run one with `cargo run --example <name>`.
-Examples that include `../example_common.rs` chdir into `examples/resources` at startup.
+Most examples load resources by relative path after calling
+`example_ensure_right_working_dir()` (from `../example_common.rs`, which chdirs
+into `examples/resources` at startup). `shader.rs`, `unicode-text-entry.rs`,
+and `window-test.rs` instead embed their assets at compile time with
+`include_str!`/`include_bytes!`.
 
 Examples that need `window`, `graphics`, or `audio` have a `[[example]]` entry with `required-features` in `Cargo.toml`. Only `clock.rs` and `version.rs` need no features.
 
@@ -41,7 +45,7 @@ Shared setup code lives in `../example_common.rs` at the crate root, not in this
 
 ## Resources
 
-`resources/` holds the assets the examples load at runtime, such as images, fonts, audio, and shaders. The examples load them by relative path, so they must stay in this folder.
+`resources/` holds the assets the examples load at runtime, such as images, fonts, audio, and shaders. Most examples load them by relative path after `example_ensure_right_working_dir()`, so they must stay in this folder. (`shader.rs`, `unicode-text-entry.rs`, and `window-test.rs` embed copies at compile time instead.)
 
 Files:
 
@@ -67,6 +71,6 @@ Files:
 - `texture.jpg`
 - `wave.vert`
 
-## Maintenance
+## Keeping this file current
 
 If you add a new example, or modify an existing one significantly enough to change the description above, you must update this file.

@@ -1,7 +1,21 @@
 # AGENTS.md
 
 Rust bindings for SFML 3.1 (crate `sfml`). Layers, bottom to top:
-`SFML/` (git submodule, C++) → `CSFML/src/` (C++ C-ABI shim) → `src/ffi/` (`extern "C"` decls) → `src/{system,window,graphics,audio}` (safe API).
+`SFML/` (git submodule, C++) → `CSFML/src/` (C++ C-ABI shim) → `src/ffi/`
+(`extern "C"` decls) → `src/cpp/` (C++ object wrappers) →
+`src/{system,window,graphics,audio}` (safe API).
+
+## SFML submodule
+
+`SFML/` is a read-only git submodule. Never modify it in any capacity: do not
+edit, add, delete, move, rename, reformat, or generate files inside it, and do
+not run commands that write there. Do not bump the submodule, patch it, or
+vendor changes into it.
+
+The only permitted write is populating an empty submodule in a fresh clone with
+`git submodule update --init`; after that, treat `SFML/` as read-only. If the
+submodule is already populated, do not run the command. Bumping SFML is a
+maintainer task and needs explicit user instruction.
 
 You must also read `src/AGENTS.md`. It provides important context for the entire project, not just `src/`.
 
@@ -12,8 +26,13 @@ If you plan to modify code in these directories, you must also read their `AGENT
 
 ## Setup and build
 
-- Run `git submodule update --init` before the first build. `build.rs` builds SFML from `SFML/` with CMake, so the first build is slow and needs cmake and a C++ toolchain.
-- Linux packages: see `.github/workflows/linux.yml`. The README list is incomplete; `build.rs` also links udev, Xi, and harfbuzz.
+- Before the first build, populate the SFML submodule: if `SFML/` is empty, run
+  `git submodule update --init` (the one permitted write, see SFML
+  submodule). Never modify a populated submodule. `build.rs` builds SFML from
+  `SFML/` with CMake, so the first build is slow and needs cmake and a C++
+  toolchain.
+- Linux packages: see `.github/workflows/linux.yml` and the README, which
+  already list udev, Xi, and harfbuzz (`build.rs` links them).
 - MSRV is Rust 1.99 (`rust-version` in `Cargo.toml`; CI pins 1.99.0). Don't use newer std APIs.
 - `build.rs` always builds SFML in Release. Debug builds of SFML are unsupported on purpose (MSVC runtime linking), so don't "fix" this.
 - `build.rs` has Linux, Windows (MSVC and mingw), and macOS branches. The Windows and macOS branches can't be verified from Linux, so edit them carefully.
@@ -25,12 +44,24 @@ If you plan to modify code in these directories, you must also read their `AGENT
 - CI also runs these. Run them when you touch feature gating or `cfg`s:
   - `cargo test --release --features ci-headless`
   - `cargo test --no-default-features --features ci-headless[,audio | ,window | ,graphics | ,audio,build-flac-ogg]`
-  - `cargo package`
+  - `cargo test --no-default-features --features ci-headless,audio` (Linux/macOS)
+- CI also runs `cargo package`; on Windows it uses `--allow-dirty`.
+- Docs: `cargo doc` must finish with no warnings. Use `cargo doc --no-deps` to
+  check only this crate.
 - Clippy: `cargo clippy --all-targets --features ci-headless`. CI doesn't run it. It exits 0 with some pre-existing warnings.
-- Rust formatting: use stable rustfmt; `rustfmt.toml` is kept free of nightly-only options. Format only the files you touch: `rustfmt +stable --edition 2024 <file>`. Never format `src/ffi/*_bindgen.rs`; they're generated (`#[rustfmt::skip]` protects them) and `include!`d, so rustfmt doesn't reach them anyway.
-- Git hooks: `.githooks/` is enabled through `core.hooksPath`. Its `pre-commit` hook formats all tracked Rust files with `rustfmt` and stages the result; it is a no-op when `rustfmt` is not installed. The generated `src/ffi/*_bindgen.rs` files are protected by `#[rustfmt::skip]`. Unlike the manual command above, the hook can reformat files you did not otherwise touch.
-- C++ formatting: `clang-format -i <file>` on touched files. `CSFML/format.sh` reformats all of `CSFML/src` (run it from `CSFML/`).
-- Examples: `cargo run --example <name>`. They need a display or audio device. Examples that `include!("../example_common.rs")` chdir into `examples/resources`.
+- Rust formatting: use stable rustfmt; `rustfmt.toml` is kept free of nightly-only options. Format only the files you touch: `rustfmt +stable --edition 2024 <file>`. Never format `src/ffi/*_bindgen.rs`; they're generated and `#[rustfmt::skip]` protects them.
+- Git hooks: enable the hook once per clone with `git config core.hooksPath
+  .githooks`. Its `pre-commit` hook formats tracked Rust files that have no
+  unstaged changes with `rustfmt` and stages the result; it is a no-op when
+  `rustfmt` is not installed. The generated `src/ffi/*_bindgen.rs` files are
+  protected by `#[rustfmt::skip]`. Unlike the manual command above, the hook
+  can reformat files you did not otherwise touch.
+- C++ formatting: after modifying any file under `CSFML/`, run `./format.sh`
+  from `CSFML/`. It formats all of `CSFML/src`. Commit its changes in the same
+  commit as your CSFML changes.
+- Examples: `cargo run --example <name>`. Most need a display or audio device;
+  `clock` and `version` need neither. Examples that
+  `include!("../example_common.rs")` chdir into `examples/resources`.
 
 ## Architecture
 
@@ -41,12 +72,16 @@ If you plan to modify code in these directories, you must also read their `AGENT
 - Default features are `graphics`, `audio`, and `build-flac-ogg`. Without `build-flac-ogg`, libFLAC and libogg link dynamically against system libraries.
 - `src/graphics/rc_{font,sprite,text,texture}.rs` are `Rc*` twins of `Font`, `Sprite`, `Text`, and `Texture`. Mirror API changes into both.
 - `src/lib.rs` includes `README.md` as the crate doc page. It also enables strict lints: `missing_docs`, `missing_debug_implementations`, `missing_copy_implementations`, `unused_results`, `clippy::unwrap_used`, `clippy::missing_panics_doc`, and others. New public items need docs and `Debug` impls.
-- Don't edit `SFML/`. Bumping it also requires updating the shim, the bindings, and the link list in `build.rs`. The 3.1 bump needed harfbuzz linked.
+- Don't edit `SFML/` (see SFML submodule). Bumping it also requires updating the
+  shim, the bindings, and the link list in `build.rs`. The 3.1 bump needed
+  harfbuzz linked.
 
 ## Tests
 
 - Tests that need a display or audio device are excluded under `ci-headless`. For new ones, follow the existing pattern:
-  - Unit tests: `#[cfg_attr(not(feature = "ci-headless"), test)]` (see `src/window/clipboard.rs`, `src/audio/capture.rs`).
+  - Unit tests: `#[cfg_attr(not(feature = "ci-headless"), test)]` paired with
+    `#[cfg_attr(feature = "ci-headless", expect(dead_code))]` (see
+    `src/window/clipboard.rs`, `src/audio/capture.rs`).
   - Doc examples that open windows: `#[cfg_attr(feature = "ci-headless", doc = "```no_run")]` paired with `#[cfg_attr(not(feature = "ci-headless"), doc = "```")]` (see `src/graphics/vertex_buffer.rs`).
 
 ## Examples
@@ -56,7 +91,7 @@ If you plan to modify code in these directories, you must also read their `AGENT
 
 ## Changes
 
-- Add user-facing changes under `## New` at the top of `CHANGELOG.md` (Added / Changed / Fixed / Removed).
+- Add user-facing changes under `## NEW` at the top of `CHANGELOG.md` (Added / Changed / Fixed / Removed).
 - A typical API addition touches, in order: `CSFML/src/<Module>/*.cpp`, then `src/ffi/` (regenerate the `*_bindgen.rs` files, see Architecture), then the safe wrapper in `src/<module>/` (plus its `rc_*` twin), then `CHANGELOG.md`.
 
 ## Commits
@@ -64,6 +99,8 @@ If you plan to modify code in these directories, you must also read their `AGENT
 - When a task is complete, commit the changes you made for it. Don't leave completed work uncommitted.
 - Each commit must contain a single idea. A feature change that spans layers is one idea: for example, a C++ `Text` change that also requires updates in `CSFML/src/Graphics/Text.cpp`, `src/ffi/graphics.rs`, `src/ffi/graphics_bindgen.rs`, `src/graphics/text.rs`, `src/graphics/rc_text.rs`, and `CHANGELOG.md` belongs in one commit.
 - Split independent ideas into separate commits. Keep unrelated fixes, refactors, and formatting changes out of the commit.
+- Formatting-only changes produced by `./format.sh` (see Commands) belong in
+  the same commit as the `CSFML/` changes that triggered them.
 - Follow these commit message rules:
   - Separate the subject from the body with a blank line.
   - Limit the subject line to 50 characters.
@@ -80,6 +117,20 @@ A task is not complete until all of these are true:
 - Rustfmt: run `rustfmt +stable --edition 2024` on every Rust file you touched (see Commands for why not the whole crate).
 - Clippy: `cargo clippy --all-targets --features ci-headless` shows no new warnings compared to before your change.
 - Tests: `cargo test --features ci-headless` passes.
+- Docs: `cargo doc` completes with no warnings. Use `cargo doc --no-deps` to
+  check only this crate, and `RUSTDOCFLAGS="-D warnings" cargo doc --no-deps`
+  to make warnings fatal.
+- C++ formatting: after modifying any file under `CSFML/`, run `./format.sh`
+  from `CSFML/` (see Commands).
+- Docs tree: update every `AGENTS.md` affected by your change, and add
+  user-facing changes to `CHANGELOG.md`.
 - Commits: the changes for the task are committed, one idea per commit (see Commits).
 
 If any step fails and you can't fix it, say so explicitly in your report instead of declaring the task complete.
+
+## Keeping this file current
+
+If a change makes this file inaccurate or incomplete, update it in the same
+change. This includes keeping the nested `AGENTS.md` files (`src/`, `CSFML/`,
+`examples/`, and the per-folder files under `src/`) in sync with the rules
+here.

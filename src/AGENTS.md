@@ -10,7 +10,7 @@ Safe Rust API for SFML 3.1 and the layers that connect it to the C++ library.
 ## Directories
 
 - `ffi/`: raw `extern "C"` declarations for the CSFML shim. Contains generated bindings (do not edit by hand) plus hand-written FFI types. Private to the crate.
-- `cpp/`: wrappers for C++ objects returned by SFML (owned boxes, strings, vectors). Used internally by the safe API.
+- `cpp/`: public low-level wrapper module for C++ objects returned by SFML (owned boxes, strings, vectors). It is also used internally by the safe API.
 - `system/`: foundation types shared by all modules, such as time, clocks, vectors, angles, strings, buffers, and version info.
 - `window/`: windows, events, input devices (keyboard, mouse, joystick, sensors), video modes, context settings, cursors, and clipboard. Gated by the `window` feature.
 - `graphics/`: 2D rendering: render targets and windows, shapes, sprites, text and fonts, textures, images, shaders, views, blend modes, and vertices. Gated by the `graphics` feature, which implies `window`.
