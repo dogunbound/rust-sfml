@@ -151,7 +151,21 @@ impl WinEnv {
     }
 }
 
+/// Whether this is a docs.rs build, where the C++ build must be skipped
+/// because docs.rs has no network access and rustdoc never links anything.
+fn build_docs_rs() -> bool {
+    println!("cargo:rerun-if-env-changed=DOCS_RS");
+    if env::var("DOCS_RS").is_err() {
+        return false;
+    }
+    println!("cargo:warning=docs.rs build: skipping the SFML/CSFML C++ build");
+    true
+}
+
 fn main() {
+    if build_docs_rs() {
+        return;
+    }
     // Need to probe Cargo's env as build.rs uses the default toolchain to
     // run the build meaning that #[cfg(..)]'s won't work
     let is_windows = env::var("CARGO_CFG_WINDOWS").is_ok();
