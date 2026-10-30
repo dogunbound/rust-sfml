@@ -109,8 +109,8 @@ impl Font {
     ///
     /// SFML reads from the stream lazily through `FreeType` callbacks, so
     /// `stream` (the adapter and its source) must outlive every use of the
-    /// returned font, including every [`Text`] bound to it. Drop the font
-    /// before the stream.
+    /// returned font, including every [`crate::graphics::Text`] bound to it.
+    /// Drop the font before the stream.
     ///
     /// ```
     /// # use sfml::graphics::Font;
@@ -165,8 +165,8 @@ impl Font {
     /// # Safety
     ///
     /// SFML reads from the stream lazily through `FreeType` callbacks, so
-    /// `stream` must outlive every use of this font, including every [`Text`]
-    /// bound to it. Drop the font before the stream.
+    /// `stream` must outlive every use of this font, including every
+    /// [`crate::graphics::Text`] bound to it. Drop the font before the stream.
     ///
     /// # See also
     /// [`Font::from_file`], [`Font::from_memory`]

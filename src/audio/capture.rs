@@ -27,11 +27,9 @@ use {
 ///
 /// [`on_stop`] is called after the capture ends, to perform custom cleanup.
 ///
-/// You can also control the frequency of the [`on_process_samples`] calls,
-/// with [`SoundRecorderDriver::set_processing_interval`].
-/// The default interval is chosen so that recording thread doesn't consume too much CPU,
-/// but it can be changed to a smaller value if you need to process the recorded data in real time,
-/// for example.
+/// The interval between the [`on_process_samples`] calls is chosen so that the
+/// recording thread doesn't consume too much CPU, rather than to process the
+/// recorded data in real time.
 ///
 /// The audio capture feature may not be supported or activated on every platform,
 /// thus it is recommended to check its availability with the [`is_available`] function.

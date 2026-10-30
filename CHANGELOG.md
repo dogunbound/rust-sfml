@@ -5,6 +5,10 @@
 ### Changed
 - Updated rust-sfml to rust version 1.99
 
+### Fixed
+- Skip the SFML/CSFML C++ build when the standard `DOCS_RS` environment variable is set, so the crate builds on docs.rs. Disable `-Zrustdoc-scrape-examples` for the same reason.
+- Fix broken intra-doc links in the `audio` and `graphics` docs, so `cargo doc` builds without warnings
+
 ## 3.1.0.0
 
 ### Added

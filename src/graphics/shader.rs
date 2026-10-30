@@ -471,7 +471,7 @@ impl<'texture> Shader<'texture> {
     /// Specify value for \p ivec4 uniform
     ///
     /// Identical to calling `set_uniform_ivec4` with an ivec4 already mapped from [`Color`]
-    /// Just a nice helper method that will convert [`Color`] into a [`IVec4`] for you
+    /// Just a nice helper method that will convert [`Color`] into a [`glsl::IVec4`] for you
     pub fn set_int_color_uniform(&mut self, name: &str, color: Color) -> SfResult<()> {
         let value: glsl::IVec4 = color.into();
         self.set_uniform_ivec4(name, value)

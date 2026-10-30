@@ -289,8 +289,8 @@ impl RcFont {
     ///
     /// SFML reads from the stream lazily through `FreeType` callbacks, so
     /// `stream` (the adapter and its source) must outlive every use of the
-    /// returned font, including every [`RcText`] bound to it. Drop the font
-    /// before the stream.
+    /// returned font, including every [`crate::graphics::RcText`] bound to it.
+    /// Drop the font before the stream.
     ///
     /// # See also
     /// [`RcFont::from_file`], [`RcFont::from_memory`]
